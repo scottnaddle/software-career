@@ -1,23 +1,34 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-import Hero from './components/Hero';
-import Services from './components/Services';
-import Benefits from './components/Benefits';
-import Process from './components/Process';
-import Statistics from './components/Statistics';
 import Footer from './components/Footer';
+import Home from './pages/Home';
+import CareerRegistration from './pages/CareerRegistration';
+import CareerSearch from './pages/CareerSearch';
+import CertificateIssue from './pages/CertificateIssue';
+import EnterpriseService from './pages/EnterpriseService';
+import Guide from './pages/Guide';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <Hero />
-      <Services />
-      <Benefits />
-      <Process />
-      <Statistics />
-      <Footer />
-    </div>
+    <Router>
+      <div className="min-h-screen bg-white">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/career-registration" element={<CareerRegistration />} />
+          <Route path="/career-search" element={<CareerSearch />} />
+          <Route path="/certificate-issue" element={<CertificateIssue />} />
+          <Route path="/enterprise" element={<EnterpriseService />} />
+          <Route path="/guide" element={<Guide />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
