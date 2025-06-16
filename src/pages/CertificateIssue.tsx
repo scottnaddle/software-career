@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Download, FileText, Shield, Calendar, User, Award, QrCode, Share2, Printer, Eye } from 'lucide-react';
+import { Download, FileText, Shield, Calendar, User, Award, QrCode, Share2, Printer, Eye, CreditCard, Clock } from 'lucide-react';
 
 const CertificateIssue = () => {
   const [selectedCareers, setSelectedCareers] = useState<number[]>([]);
   const [certificateType, setCertificateType] = useState('comprehensive');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState('');
 
   const verifiedCareers = [
     {
@@ -52,6 +54,27 @@ const CertificateIssue = () => {
     }
   ];
 
+  const certificatePlans = {
+    basic: {
+      name: '기본 증명서',
+      price: 5000,
+      features: ['PDF 다운로드', '기본 양식', '1년 보관'],
+      delivery: '즉시 발급'
+    },
+    premium: {
+      name: '프리미엄 증명서',
+      price: 15000,
+      features: ['PDF 다운로드', '고급 양식', 'QR 코드 인증', '영문 번역', '무제한 보관'],
+      delivery: '즉시 발급'
+    },
+    official: {
+      name: '공식 인증서',
+      price: 25000,
+      features: ['PDF 다운로드', '공식 양식', 'QR 코드 인증', '영문 번역', '우편 발송', '무제한 보관', '법적 효력'],
+      delivery: '1-2일 처리'
+    }
+  };
+
   const toggleCareerSelection = (careerId: number) => {
     setSelectedCareers(prev => 
       prev.includes(careerId) 
@@ -66,6 +89,163 @@ const CertificateIssue = () => {
 
   const clearSelection = () => {
     setSelectedCareers([]);
+  };
+
+  const handleCertificateIssue = (planType: string) => {
+    setSelectedPlan(planType);
+    setShowPaymentModal(true);
+  };
+
+  const PaymentModal = () => {
+    const [paymentMethod, setPaymentMethod] = useState('card');
+    const [cardInfo, setCardInfo] = useState({
+      number: '',
+      expiry: '',
+      cvc: '',
+      name: ''
+    });
+
+    const currentPlan = certificatePlans[selectedPlan as keyof typeof certificatePlans];
+    const careerCount = certificateType === 'comprehensive' ? verifiedCareers.length : selectedCareers.length;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900">증명서 발급 결제</h3>
+              <button
+                onClick={() => setShowPaymentModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Plan Summary */}
+            <div className="bg-blue-50 rounded-xl p-4 mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-semibold text-blue-900">{currentPlan?.name}</h4>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {currentPlan?.price.toLocaleString()}원
+                  </div>
+                  <div className="text-sm text-blue-600">{currentPlan?.delivery}</div>
+                </div>
+              </div>
+              <div className="text-sm text-blue-700 mb-3">
+                포함 경력: {careerCount}개 • {certificateType === 'comprehensive' ? '종합' : '선택'} 증명서
+              </div>
+              <ul className="text-sm text-blue-700 space-y-1">
+                {currentPlan?.features.map((feature, index) => (
+                  <li key={index} className="flex items-center">
+                    <Shield className="h-3 w-3 mr-2" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Payment Method */}
+            <div className="mb-6">
+              <h4 className="font-semibold text-gray-900 mb-3">결제 방법</h4>
+              <div className="space-y-3">
+                <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="card"
+                    checked={paymentMethod === 'card'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mr-3"
+                  />
+                  <CreditCard className="h-5 w-5 mr-2 text-gray-600" />
+                  <span>신용카드/체크카드</span>
+                </label>
+                <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="transfer"
+                    checked={paymentMethod === 'transfer'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mr-3"
+                  />
+                  <span>계좌이체</span>
+                </label>
+                <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="kakao"
+                    checked={paymentMethod === 'kakao'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mr-3"
+                  />
+                  <span>카카오페이</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Card Information */}
+            {paymentMethod === 'card' && (
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-900 mb-3">카드 정보</h4>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    placeholder="카드번호 (0000-0000-0000-0000)"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={cardInfo.number}
+                    onChange={(e) => setCardInfo({...cardInfo, number: e.target.value})}
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      placeholder="MM/YY"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={cardInfo.expiry}
+                      onChange={(e) => setCardInfo({...cardInfo, expiry: e.target.value})}
+                    />
+                    <input
+                      type="text"
+                      placeholder="CVC"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={cardInfo.cvc}
+                      onChange={(e) => setCardInfo({...cardInfo, cvc: e.target.value})}
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="카드소유자명"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={cardInfo.name}
+                    onChange={(e) => setCardInfo({...cardInfo, name: e.target.value})}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Total */}
+            <div className="border-t pt-4 mb-6">
+              <div className="flex items-center justify-between text-lg font-bold">
+                <span>총 결제금액</span>
+                <span className="text-blue-600">{currentPlan?.price.toLocaleString()}원</span>
+              </div>
+            </div>
+
+            {/* Payment Button */}
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition-colors">
+              {currentPlan?.price.toLocaleString()}원 결제하기
+            </button>
+
+            <p className="text-xs text-gray-500 text-center mt-3">
+              결제 완료 후 증명서가 발급됩니다. 환불 정책은 이용약관을 확인해주세요.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -196,25 +376,46 @@ const CertificateIssue = () => {
               </div>
             )}
 
-            {/* Issue Button */}
+            {/* Certificate Plans */}
             <div className="bg-white rounded-2xl shadow-sm p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">증명서 발급 준비 완료</h3>
-                  <p className="text-sm text-gray-600">
-                    {certificateType === 'comprehensive' 
-                      ? `총 ${verifiedCareers.length}개의 검증된 경력이 포함됩니다.`
-                      : `선택된 ${selectedCareers.length}개의 경력이 포함됩니다.`
-                    }
-                  </p>
-                </div>
-                <button
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center"
-                  disabled={certificateType === 'selective' && selectedCareers.length === 0}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  증명서 발급
-                </button>
+              <h2 className="text-xl font-bold text-gray-900 mb-6">증명서 플랜 선택</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {Object.entries(certificatePlans).map(([key, plan]) => (
+                  <div
+                    key={key}
+                    className="border-2 border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-all"
+                  >
+                    <div className="text-center mb-4">
+                      <h3 className="font-bold text-gray-900 mb-2">{plan.name}</h3>
+                      <div className="text-2xl font-bold text-blue-600 mb-1">
+                        {plan.price.toLocaleString()}원
+                      </div>
+                      <div className="text-sm text-gray-600">{plan.delivery}</div>
+                    </div>
+                    
+                    <ul className="space-y-2 mb-6">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-center text-sm text-gray-600">
+                          <Shield className="h-3 w-3 mr-2 text-green-500" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <button
+                      onClick={() => handleCertificateIssue(key)}
+                      className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                        key === 'premium'
+                          ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                          : 'border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white'
+                      }`}
+                      disabled={certificateType === 'selective' && selectedCareers.length === 0}
+                    >
+                      선택하기
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -334,6 +535,9 @@ const CertificateIssue = () => {
           </div>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && <PaymentModal />}
     </div>
   );
 };

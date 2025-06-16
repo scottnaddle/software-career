@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Plus, Save, FileText, Calendar, MapPin, Users, Code, Award, Trash2 } from 'lucide-react';
+import { Plus, Save, FileText, Calendar, MapPin, Users, Code, Award, Trash2, CreditCard, Clock, Shield } from 'lucide-react';
 
 const CareerRegistration = () => {
   const [activeTab, setActiveTab] = useState('project');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentType, setPaymentType] = useState('');
   const [projects, setProjects] = useState([
     {
       id: 1,
@@ -40,12 +42,180 @@ const CareerRegistration = () => {
     ));
   };
 
+  const handleVerificationRequest = (type: 'standard' | 'express') => {
+    setPaymentType(type);
+    setShowPaymentModal(true);
+  };
+
   const tabs = [
     { id: 'project', name: '프로젝트 경력', icon: Code },
     { id: 'education', name: '교육 이수', icon: FileText },
     { id: 'certificate', name: '자격증', icon: Award },
     { id: 'experience', name: '기타 경력', icon: Users }
   ];
+
+  const PaymentModal = () => {
+    const [paymentMethod, setPaymentMethod] = useState('card');
+    const [cardInfo, setCardInfo] = useState({
+      number: '',
+      expiry: '',
+      cvc: '',
+      name: ''
+    });
+
+    const verificationPlans = {
+      standard: {
+        name: '일반 검증',
+        price: 15000,
+        duration: '5-7일',
+        features: ['전문가 검토', '블록체인 인증', '검증 리포트']
+      },
+      express: {
+        name: '신속 검증',
+        price: 35000,
+        duration: '1-2일',
+        features: ['우선 검토', '신속 처리', '전문가 검토', '블록체인 인증', '상세 검증 리포트']
+      }
+    };
+
+    const currentPlan = verificationPlans[paymentType as keyof typeof verificationPlans];
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900">결제하기</h3>
+              <button
+                onClick={() => setShowPaymentModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Plan Summary */}
+            <div className="bg-blue-50 rounded-xl p-4 mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-semibold text-blue-900">{currentPlan?.name}</h4>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {currentPlan?.price.toLocaleString()}원
+                  </div>
+                  <div className="text-sm text-blue-600">처리기간: {currentPlan?.duration}</div>
+                </div>
+              </div>
+              <ul className="text-sm text-blue-700 space-y-1">
+                {currentPlan?.features.map((feature, index) => (
+                  <li key={index} className="flex items-center">
+                    <Shield className="h-3 w-3 mr-2" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Payment Method */}
+            <div className="mb-6">
+              <h4 className="font-semibold text-gray-900 mb-3">결제 방법</h4>
+              <div className="space-y-3">
+                <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="card"
+                    checked={paymentMethod === 'card'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mr-3"
+                  />
+                  <CreditCard className="h-5 w-5 mr-2 text-gray-600" />
+                  <span>신용카드/체크카드</span>
+                </label>
+                <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="transfer"
+                    checked={paymentMethod === 'transfer'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mr-3"
+                  />
+                  <span>계좌이체</span>
+                </label>
+                <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="kakao"
+                    checked={paymentMethod === 'kakao'}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mr-3"
+                  />
+                  <span>카카오페이</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Card Information */}
+            {paymentMethod === 'card' && (
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-900 mb-3">카드 정보</h4>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    placeholder="카드번호 (0000-0000-0000-0000)"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={cardInfo.number}
+                    onChange={(e) => setCardInfo({...cardInfo, number: e.target.value})}
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      placeholder="MM/YY"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={cardInfo.expiry}
+                      onChange={(e) => setCardInfo({...cardInfo, expiry: e.target.value})}
+                    />
+                    <input
+                      type="text"
+                      placeholder="CVC"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={cardInfo.cvc}
+                      onChange={(e) => setCardInfo({...cardInfo, cvc: e.target.value})}
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="카드소유자명"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={cardInfo.name}
+                    onChange={(e) => setCardInfo({...cardInfo, name: e.target.value})}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Total */}
+            <div className="border-t pt-4 mb-6">
+              <div className="flex items-center justify-between text-lg font-bold">
+                <span>총 결제금액</span>
+                <span className="text-blue-600">{currentPlan?.price.toLocaleString()}원</span>
+              </div>
+            </div>
+
+            {/* Payment Button */}
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition-colors">
+              {currentPlan?.price.toLocaleString()}원 결제하기
+            </button>
+
+            <p className="text-xs text-gray-500 text-center mt-3">
+              결제 완료 후 검증이 시작됩니다. 환불 정책은 이용약관을 확인해주세요.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -82,6 +252,38 @@ const CareerRegistration = () => {
                   </button>
                 ))}
               </nav>
+
+              {/* Verification Plans */}
+              <div className="mt-8">
+                <h4 className="font-semibold text-gray-900 mb-4">검증 서비스</h4>
+                <div className="space-y-3">
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-gray-900">일반 검증</span>
+                      <span className="text-blue-600 font-bold">15,000원</span>
+                    </div>
+                    <p className="text-xs text-gray-600 mb-2">5-7일 처리</p>
+                    <ul className="text-xs text-gray-600 space-y-1">
+                      <li>• 전문가 검토</li>
+                      <li>• 블록체인 인증</li>
+                      <li>• 검증 리포트</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-blue-900">신속 검증</span>
+                      <span className="text-blue-600 font-bold">35,000원</span>
+                    </div>
+                    <p className="text-xs text-blue-700 mb-2">1-2일 처리</p>
+                    <ul className="text-xs text-blue-700 space-y-1">
+                      <li>• 우선 검토</li>
+                      <li>• 신속 처리</li>
+                      <li>• 상세 리포트</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
 
               <div className="mt-8 p-4 bg-blue-50 rounded-lg">
                 <h4 className="font-semibold text-blue-900 mb-2">등록 팁</h4>
@@ -320,10 +522,22 @@ const CareerRegistration = () => {
                     <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors">
                       미리보기
                     </button>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center">
-                      <Save className="h-4 w-4 mr-2" />
-                      검증 요청
-                    </button>
+                    <div className="inline-flex space-x-2">
+                      <button 
+                        onClick={() => handleVerificationRequest('standard')}
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center"
+                      >
+                        <Clock className="h-4 w-4 mr-2" />
+                        일반 검증 (15,000원)
+                      </button>
+                      <button 
+                        onClick={() => handleVerificationRequest('express')}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center"
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        신속 검증 (35,000원)
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -331,6 +545,9 @@ const CareerRegistration = () => {
           </div>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && <PaymentModal />}
     </div>
   );
 };

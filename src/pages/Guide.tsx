@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Book, Video, FileText, HelpCircle, Search, ChevronRight, Play, Download, ExternalLink } from 'lucide-react';
+import { Book, Video, FileText, HelpCircle, Search, ChevronRight, Play, Download, ExternalLink, CreditCard, Clock, Shield } from 'lucide-react';
 
 const Guide = () => {
   const [activeCategory, setActiveCategory] = useState('getting-started');
@@ -29,6 +29,12 @@ const Guide = () => {
       name: '증명서 발급',
       icon: Download,
       description: '증명서 발급 및 활용법'
+    },
+    {
+      id: 'payment',
+      name: '결제 안내',
+      icon: CreditCard,
+      description: '결제 방법 및 요금 안내'
     },
     {
       id: 'enterprise',
@@ -109,6 +115,14 @@ const Guide = () => {
         popular: true
       },
       {
+        title: '일반 검증 vs 신속 검증',
+        description: '검증 서비스 유형별 차이점과 선택 가이드',
+        type: 'article',
+        duration: '5분',
+        difficulty: '초급',
+        popular: true
+      },
+      {
         title: '검증 반려 사유와 대응법',
         description: '검증이 반려되는 주요 사유와 해결 방법',
         type: 'article',
@@ -135,6 +149,14 @@ const Guide = () => {
         popular: true
       },
       {
+        title: '증명서 플랜 비교',
+        description: '기본, 프리미엄, 공식 증명서의 차이점과 선택 가이드',
+        type: 'article',
+        duration: '6분',
+        difficulty: '초급',
+        popular: true
+      },
+      {
         title: '증명서 진위 확인하기',
         description: 'QR 코드를 통한 증명서 진위 확인 방법',
         type: 'article',
@@ -149,6 +171,48 @@ const Guide = () => {
         duration: '15분',
         difficulty: '중급',
         popular: true
+      }
+    ],
+    'payment': [
+      {
+        title: '결제 시스템 이용 가이드',
+        description: '검증 및 증명서 발급 결제 방법 안내',
+        type: 'article',
+        duration: '7분',
+        difficulty: '초급',
+        popular: true
+      },
+      {
+        title: '요금제 및 가격 정책',
+        description: '서비스별 요금 체계와 할인 혜택 안내',
+        type: 'article',
+        duration: '8분',
+        difficulty: '초급',
+        popular: true
+      },
+      {
+        title: '환불 정책 및 절차',
+        description: '환불 조건과 신청 방법에 대한 상세 안내',
+        type: 'article',
+        duration: '5분',
+        difficulty: '초급',
+        popular: false
+      },
+      {
+        title: '결제 오류 해결 방법',
+        description: '결제 과정에서 발생할 수 있는 문제와 해결책',
+        type: 'article',
+        duration: '6분',
+        difficulty: '중급',
+        popular: false
+      },
+      {
+        title: '세금계산서 및 영수증 발급',
+        description: '사업자를 위한 세금계산서 발급 방법',
+        type: 'article',
+        duration: '4분',
+        difficulty: '초급',
+        popular: false
       }
     ],
     'enterprise': [
@@ -262,20 +326,52 @@ const Guide = () => {
                 ))}
               </nav>
 
-              {/* Quick Links */}
+              {/* Pricing Info */}
               <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-                <h4 className="font-semibold text-blue-900 mb-3">빠른 링크</h4>
+                <h4 className="font-semibold text-blue-900 mb-3">서비스 요금</h4>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-blue-700">일반 검증</span>
+                    <span className="font-semibold text-blue-900">15,000원</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-blue-700">신속 검증</span>
+                    <span className="font-semibold text-blue-900">35,000원</span>
+                  </div>
+                  <div className="border-t border-blue-200 pt-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-blue-700">기본 증명서</span>
+                      <span className="font-semibold text-blue-900">5,000원</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-blue-700">프리미엄 증명서</span>
+                      <span className="font-semibold text-blue-900">15,000원</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-blue-700">공식 증명서</span>
+                      <span className="font-semibold text-blue-900">25,000원</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Links */}
+              <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-semibold text-gray-900 mb-3">빠른 링크</h4>
                 <div className="space-y-2">
-                  <a href="#" className="block text-sm text-blue-700 hover:text-blue-800">
+                  <a href="#" className="block text-sm text-gray-700 hover:text-blue-600">
                     • 회원가입하기
                   </a>
-                  <a href="#" className="block text-sm text-blue-700 hover:text-blue-800">
+                  <a href="#" className="block text-sm text-gray-700 hover:text-blue-600">
                     • 경력 등록하기
                   </a>
-                  <a href="#" className="block text-sm text-blue-700 hover:text-blue-800">
+                  <a href="#" className="block text-sm text-gray-700 hover:text-blue-600">
+                    • 결제 방법 안내
+                  </a>
+                  <a href="#" className="block text-sm text-gray-700 hover:text-blue-600">
                     • 고객센터 문의
                   </a>
-                  <a href="#" className="block text-sm text-blue-700 hover:text-blue-800">
+                  <a href="#" className="block text-sm text-gray-700 hover:text-blue-600">
                     • API 문서
                   </a>
                 </div>
@@ -306,6 +402,52 @@ const Guide = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Payment Guide for Payment Category */}
+              {activeCategory === 'payment' && (
+                <div className="p-6 border-b border-gray-200 bg-blue-50">
+                  <h3 className="text-lg font-semibold text-blue-900 mb-4">결제 서비스 안내</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-white rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                        <Shield className="h-5 w-5 mr-2 text-blue-600" />
+                        경력 검증 서비스
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span>일반 검증 (5-7일)</span>
+                          <span className="font-semibold">15,000원</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>신속 검증 (1-2일)</span>
+                          <span className="font-semibold">35,000원</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                        <FileText className="h-5 w-5 mr-2 text-green-600" />
+                        증명서 발급 서비스
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span>기본 증명서</span>
+                          <span className="font-semibold">5,000원</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>프리미엄 증명서</span>
+                          <span className="font-semibold">15,000원</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>공식 증명서</span>
+                          <span className="font-semibold">25,000원</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Guides List */}
               <div className="p-6">
@@ -392,8 +534,8 @@ const Guide = () => {
                     <FileText className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900">경력 등록 가이드</h4>
-                    <p className="text-sm text-gray-600">8분 • 초급</p>
+                    <h4 className="font-medium text-gray-900">결제 시스템 가이드</h4>
+                    <p className="text-sm text-gray-600">7분 • 초급</p>
                   </div>
                 </div>
               </div>
@@ -407,6 +549,7 @@ const Guide = () => {
                 </h3>
                 <p className="text-gray-600 mb-6">
                   가이드로 해결되지 않는 문제가 있다면 고객센터로 문의해주세요.
+                  결제 관련 문의는 우선적으로 처리해드립니다.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
