@@ -6,33 +6,33 @@ const Process = () => {
     {
       step: 1,
       icon: UserPlus,
-      title: 'Sign Up',
-      description: 'Join K-Xpert with simple information input.',
-      details: ['Basic information input', 'Email verification', 'Profile setup'],
+      title: '회원가입',
+      description: '간단한 정보 입력으로 K-Xpert에 가입하세요.',
+      details: ['기본 정보 입력', '이메일 인증', '프로필 설정'],
       color: 'blue'
     },
     {
       step: 2,
       icon: FileText,
-      title: 'Career Registration',
-      description: 'Register various careers including global business projects, education, and certifications.',
-      details: ['Detailed project information', 'Specify skill sets', 'Attach deliverables'],
+      title: '경력 등록',
+      description: '글로벌 비즈니스 프로젝트, 교육, 자격증 등 다양한 경력을 등록하세요.',
+      details: ['상세 프로젝트 정보', '기술 스택 명시', '성과물 첨부'],
       color: 'green'
     },
     {
       step: 3,
       icon: Shield,
-      title: 'Expert Verification',
-      description: 'Industry experts review registered careers and certify them with blockchain technology.',
-      details: ['Expert review', 'Blockchain certification', 'Verification completion notification'],
+      title: '전문가 검증',
+      description: '업계 전문가가 등록된 경력을 검토하고 블록체인 기술로 인증합니다.',
+      details: ['전문가 검토', '블록체인 인증', '검증 완료 알림'],
       color: 'purple'
     },
     {
       step: 4,
       icon: Award,
-      title: 'Certificate Issue',
-      description: 'Receive official certificates based on your verified career.',
-      details: ['Instant issuance available', 'PDF download', 'QR code authenticity verification'],
+      title: '증명서 발급',
+      description: '검증된 경력을 바탕으로 공식 증명서를 발급받으세요.',
+      details: ['즉시 발급 가능', 'PDF 다운로드', 'QR 코드 진위 확인'],
       color: 'orange'
     }
   ];
@@ -72,11 +72,11 @@ const Process = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            How to Use
+            이용 방법
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Start professional career management with 4 simple steps.
-            We provide detailed guides for each step so anyone can use it easily.
+            4단계의 간단한 과정으로 전문적인 경력 관리를 시작하세요.
+            각 단계별로 상세한 가이드를 제공하여 누구나 쉽게 이용할 수 있습니다.
           </p>
         </div>
 
@@ -157,18 +157,18 @@ const Process = () => {
         <div className="text-center mt-16">
           <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl p-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Start Right Now
+              지금 바로 시작하세요
             </h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              From sign-up to certificate issuance, the entire process is free.
-              Build professional career management for a better career.
+              회원가입부터 증명서 발급까지 전 과정이 체계적으로 관리됩니다.
+              더 나은 경력을 위한 전문적인 경력 관리를 시작하세요.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-colors duration-200">
-                Free Sign Up
+                회원가입하기
               </button>
               <button className="border-2 border-gray-300 text-gray-700 hover:border-blue-300 hover:text-blue-600 px-8 py-3 rounded-xl font-semibold transition-all duration-200">
-                Try Demo
+                데모 체험하기
               </button>
             </div>
           </div>

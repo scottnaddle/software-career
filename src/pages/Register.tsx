@@ -43,15 +43,15 @@ const Register = () => {
               <Award className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Sign Up</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">회원가입</h2>
           <p className="text-gray-600">
-            Start professional career management with K-Xpert
+            K-Xpert와 함께 전문적인 경력 관리를 시작하세요
           </p>
         </div>
 
         {/* Account Type Selection */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Account Type</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">계정 유형 선택</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div
               className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${
@@ -66,12 +66,12 @@ const Register = () => {
                   <User className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900">Individual</h4>
-                  <p className="text-sm text-gray-600">Global Business Expert</p>
+                  <h4 className="font-semibold text-gray-900">개인</h4>
+                  <p className="text-sm text-gray-600">글로벌 비즈니스 전문가</p>
                 </div>
               </div>
               <p className="text-sm text-gray-600">
-                Use individual services such as career registration, verification, and certificate issuance
+                경력 등록, 검증, 증명서 발급 등 개인 서비스를 이용하세요
               </p>
             </div>
 
@@ -88,12 +88,12 @@ const Register = () => {
                   <Building className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900">Enterprise</h4>
-                  <p className="text-sm text-gray-600">Recruiter</p>
+                  <h4 className="font-semibold text-gray-900">기업</h4>
+                  <p className="text-sm text-gray-600">채용 담당자</p>
                 </div>
               </div>
               <p className="text-sm text-gray-600">
-                Use enterprise services such as career verification, talent search, and recruitment analytics
+                경력 검증, 인재 검색, 채용 분석 등 기업 서비스를 이용하세요
               </p>
             </div>
           </div>
@@ -105,7 +105,7 @@ const Register = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  {accountType === 'individual' ? 'Name' : 'Contact Person'} *
+                  {accountType === 'individual' ? '이름' : '담당자명'} *
                 </label>
                 <input
                   id="name"
@@ -113,7 +113,7 @@ const Register = () => {
                   type="text"
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  placeholder={accountType === 'individual' ? 'Enter your name' : 'Enter contact person name'}
+                  placeholder={accountType === 'individual' ? '이름을 입력하세요' : '담당자명을 입력하세요'}
                   value={formData.name}
                   onChange={handleInputChange}
                 />
@@ -121,7 +121,7 @@ const Register = () => {
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address *
+                  이메일 주소 *
                 </label>
                 <input
                   id="email"
@@ -129,7 +129,7 @@ const Register = () => {
                   type="email"
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  placeholder="Enter your email"
+                  placeholder="이메일을 입력하세요"
                   value={formData.email}
                   onChange={handleInputChange}
                 />
@@ -139,7 +139,7 @@ const Register = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password *
+                  비밀번호 *
                 </label>
                 <div className="relative">
                   <input
@@ -148,7 +148,7 @@ const Register = () => {
                     type={showPassword ? 'text' : 'password'}
                     required
                     className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="Enter your password"
+                    placeholder="비밀번호를 입력하세요"
                     value={formData.password}
                     onChange={handleInputChange}
                   />
@@ -168,7 +168,7 @@ const Register = () => {
 
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password *
+                  비밀번호 확인 *
                 </label>
                 <div className="relative">
                   <input
@@ -177,7 +177,7 @@ const Register = () => {
                     type={showConfirmPassword ? 'text' : 'password'}
                     required
                     className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="Re-enter your password"
+                    placeholder="비밀번호를 다시 입력하세요"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                   />
@@ -198,7 +198,7 @@ const Register = () => {
 
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number *
+                전화번호 *
               </label>
               <input
                 id="phone"
@@ -206,7 +206,7 @@ const Register = () => {
                 type="tel"
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="+1-000-000-0000"
+                placeholder="010-0000-0000"
                 value={formData.phone}
                 onChange={handleInputChange}
               />
@@ -216,7 +216,7 @@ const Register = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
-                    Company Name *
+                    회사명 *
                   </label>
                   <input
                     id="company"
@@ -224,7 +224,7 @@ const Register = () => {
                     type="text"
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="Enter company name"
+                    placeholder="회사명을 입력하세요"
                     value={formData.company}
                     onChange={handleInputChange}
                   />
@@ -232,7 +232,7 @@ const Register = () => {
 
                 <div>
                   <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-2">
-                    Position *
+                    직책 *
                   </label>
                   <input
                     id="position"
@@ -240,7 +240,7 @@ const Register = () => {
                     type="text"
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    placeholder="Enter your position"
+                    placeholder="직책을 입력하세요"
                     value={formData.position}
                     onChange={handleInputChange}
                   />
@@ -261,9 +261,9 @@ const Register = () => {
                   onChange={handleInputChange}
                 />
                 <label htmlFor="agreeTerms" className="ml-3 text-sm text-gray-700">
-                  <span className="font-medium text-red-500">[Required]</span> I agree to the Terms of Service.{' '}
+                  <span className="font-medium text-red-500">[필수]</span> 이용약관에 동의합니다.{' '}
                   <a href="#" className="text-blue-600 hover:text-blue-500">
-                    View Details
+                    자세히 보기
                   </a>
                 </label>
               </div>
@@ -279,9 +279,9 @@ const Register = () => {
                   onChange={handleInputChange}
                 />
                 <label htmlFor="agreePrivacy" className="ml-3 text-sm text-gray-700">
-                  <span className="font-medium text-red-500">[Required]</span> I agree to the Privacy Policy.{' '}
+                  <span className="font-medium text-red-500">[필수]</span> 개인정보처리방침에 동의합니다.{' '}
                   <a href="#" className="text-blue-600 hover:text-blue-500">
-                    View Details
+                    자세히 보기
                   </a>
                 </label>
               </div>
@@ -296,7 +296,7 @@ const Register = () => {
                   onChange={handleInputChange}
                 />
                 <label htmlFor="agreeMarketing" className="ml-3 text-sm text-gray-700">
-                  <span className="font-medium text-gray-500">[Optional]</span> I agree to receive marketing information.
+                  <span className="font-medium text-gray-500">[선택]</span> 마케팅 정보 수신에 동의합니다.
                 </label>
               </div>
             </div>
@@ -305,16 +305,16 @@ const Register = () => {
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
             >
-              Sign Up
+              회원가입
             </button>
           </form>
 
           {/* Login link */}
           <div className="mt-6 text-center">
             <p className="text-gray-600">
-              Already have an account?{' '}
+              이미 계정이 있으신가요?{' '}
               <Link to="/login" className="text-blue-600 hover:text-blue-500 font-medium">
-                Login
+                로그인
               </Link>
             </p>
           </div>
@@ -323,31 +323,31 @@ const Register = () => {
         {/* Benefits */}
         <div className="mt-8 bg-white rounded-2xl shadow-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
-            Sign Up Benefits
+            회원가입 혜택
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <CheckCircle className="h-6 w-6 text-blue-600" />
               </div>
-              <h4 className="font-medium text-gray-900 mb-1">Free Service</h4>
-              <p className="text-sm text-gray-600">Use all core features for free</p>
+              <h4 className="font-medium text-gray-900 mb-1">전문적인 서비스</h4>
+              <p className="text-sm text-gray-600">체계적인 경력 관리 서비스</p>
             </div>
             
             <div className="text-center">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Award className="h-6 w-6 text-green-600" />
               </div>
-              <h4 className="font-medium text-gray-900 mb-1">Official Certification</h4>
-              <p className="text-sm text-gray-600">Government certified career certificates</p>
+              <h4 className="font-medium text-gray-900 mb-1">공식 인증</h4>
+              <p className="text-sm text-gray-600">정부 공인 경력증명서</p>
             </div>
             
             <div className="text-center">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Building className="h-6 w-6 text-purple-600" />
               </div>
-              <h4 className="font-medium text-gray-900 mb-1">Professional Support</h4>
-              <p className="text-sm text-gray-600">24/7 customer support service</p>
+              <h4 className="font-medium text-gray-900 mb-1">전문 지원</h4>
+              <p className="text-sm text-gray-600">24/7 고객지원 서비스</p>
             </div>
           </div>
         </div>

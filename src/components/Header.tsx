@@ -22,7 +22,7 @@ const Header = () => {
               </div>
               <div>
                 <span className="text-xl font-bold text-gray-900">K-Xpert</span>
-                <div className="text-xs text-gray-500">Global Business Expert Platform</div>
+                <div className="text-xs text-gray-500">글로벌 비즈니스 전문가 플랫폼</div>
               </div>
             </Link>
           </div>
@@ -37,7 +37,7 @@ const Header = () => {
                   : 'text-gray-700 hover:text-blue-600'
               }`}
             >
-              Career Registration
+              경력 등록
             </Link>
             <Link 
               to="/career-search" 
@@ -47,7 +47,7 @@ const Header = () => {
                   : 'text-gray-700 hover:text-blue-600'
               }`}
             >
-              Career Search
+              경력 조회
             </Link>
             <Link 
               to="/certificate-issue" 
@@ -57,7 +57,7 @@ const Header = () => {
                   : 'text-gray-700 hover:text-blue-600'
               }`}
             >
-              Certificate Issue
+              증명서 발급
             </Link>
             <Link 
               to="/enterprise" 
@@ -67,7 +67,7 @@ const Header = () => {
                   : 'text-gray-700 hover:text-blue-600'
               }`}
             >
-              Enterprise Service
+              기업 서비스
             </Link>
             <Link 
               to="/guide" 
@@ -78,7 +78,7 @@ const Header = () => {
               }`}
             >
               <HelpCircle className="h-4 w-4 mr-1" />
-              User Guide
+              이용 안내
             </Link>
           </nav>
 
@@ -88,13 +88,13 @@ const Header = () => {
               to="/login"
               className="text-gray-700 hover:text-blue-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-300 hover:border-blue-300"
             >
-              Login
+              로그인
             </Link>
             <Link 
               to="/register"
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
-              Sign Up
+              회원가입
             </Link>
           </div>
 
@@ -122,7 +122,7 @@ const Header = () => {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Career Registration
+                경력 등록
               </Link>
               <Link 
                 to="/career-search" 
@@ -133,7 +133,7 @@ const Header = () => {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Career Search
+                경력 조회
               </Link>
               <Link 
                 to="/certificate-issue" 
@@ -144,7 +144,7 @@ const Header = () => {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Certificate Issue
+                증명서 발급
               </Link>
               <Link 
                 to="/enterprise" 
@@ -155,7 +155,7 @@ const Header = () => {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Enterprise Service
+                기업 서비스
               </Link>
               <Link 
                 to="/guide" 
@@ -166,7 +166,7 @@ const Header = () => {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                User Guide
+                이용 안내
               </Link>
               <div className="border-t border-gray-200 pt-4 space-y-2">
                 <Link 
@@ -174,14 +174,14 @@ const Header = () => {
                   className="block w-full text-left text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Login
+                  로그인
                 </Link>
                 <Link 
                   to="/register"
                   className="block w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-base font-medium transition-colors text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Sign Up
+                  회원가입
                 </Link>
               </div>
             </div>

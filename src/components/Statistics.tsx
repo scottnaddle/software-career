@@ -6,49 +6,49 @@ const Statistics = () => {
     {
       icon: Users,
       number: '50,247',
-      label: 'Registered Experts',
-      description: 'Verified global business experts participating',
+      label: '등록된 전문가',
+      description: '검증된 글로벌 비즈니스 전문가 참여',
       growth: '+15%'
     },
     {
       icon: Award,
       number: '127,893',
-      label: 'Verified Careers',
-      description: 'Trusted careers reviewed by industry experts',
+      label: '검증된 경력',
+      description: '업계 전문가가 검토한 신뢰할 수 있는 경력',
       growth: '+23%'
     },
     {
       icon: Building,
       number: '2,847',
-      label: 'Partner Companies',
-      description: 'Companies using career verification services',
+      label: '파트너 기업',
+      description: '경력 검증 서비스를 이용하는 기업',
       growth: '+31%'
     },
     {
       icon: Globe,
       number: '15',
-      label: 'Supported Countries',
-      description: 'Global standard career certificate recognition',
+      label: '지원 국가',
+      description: '글로벌 표준 경력증명서 인정 국가',
       growth: '+3'
     }
   ];
 
   const achievements = [
     {
-      title: 'Government Certified Service',
-      description: 'Government-certified global business expert career management platform',
+      title: '정부 공인 서비스',
+      description: '정부가 인증한 글로벌 비즈니스 전문가 경력관리 플랫폼',
       icon: Award,
       color: 'blue'
     },
     {
-      title: 'Blockchain Certification',
-      description: 'Career information protection with tamper-proof blockchain technology',
+      title: '블록체인 인증',
+      description: '위변조 불가능한 블록체인 기술로 경력 정보 보호',
       icon: Clock,
       color: 'green'
     },
     {
-      title: 'ISO 27001 Certified',
-      description: 'International standard information security management system certification',
+      title: 'ISO 27001 인증',
+      description: '국제 표준 정보보안 관리체계 인증 획득',
       icon: TrendingUp,
       color: 'purple'
     }
@@ -59,11 +59,11 @@ const Statistics = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Trusted Platform
+            신뢰받는 플랫폼
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Check the key indicators showing the achievements and 
-            reliability of K-Xpert chosen by numerous global business experts and companies.
+            수많은 글로벌 비즈니스 전문가와 기업이 선택한 K-Xpert의 
+            성과와 신뢰성을 보여주는 주요 지표를 확인해보세요.
           </p>
         </div>
 
@@ -95,10 +95,10 @@ const Statistics = () => {
         <div className="bg-white rounded-3xl p-12 shadow-lg">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              Certifications & Achievements
+              인증 및 성과
             </h3>
             <p className="text-lg text-gray-600">
-              Introducing the major certifications and achievements received by K-Xpert.
+              K-Xpert가 받은 주요 인증과 성과를 소개합니다.
             </p>
           </div>
 
@@ -133,28 +133,28 @@ const Statistics = () => {
         {/* Timeline */}
         <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-white">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold mb-4">K-Xpert Development History</h3>
+            <h3 className="text-3xl font-bold mb-4">K-Xpert 발전 과정</h3>
             <p className="text-blue-100 text-lg">
-              Providing better services through continuous innovation and development.
+              지속적인 혁신과 발전을 통해 더 나은 서비스를 제공하고 있습니다.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="text-2xl font-bold mb-2">2021</div>
-              <div className="text-blue-100 text-sm">Service Launch</div>
+              <div className="text-blue-100 text-sm">서비스 출시</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold mb-2">2022</div>
-              <div className="text-blue-100 text-sm">Government Certification</div>
+              <div className="text-blue-100 text-sm">정부 공인 획득</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold mb-2">2023</div>
-              <div className="text-blue-100 text-sm">Blockchain Implementation</div>
+              <div className="text-blue-100 text-sm">블록체인 도입</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold mb-2">2024</div>
-              <div className="text-blue-100 text-sm">Global Expansion</div>
+              <div className="text-blue-100 text-sm">글로벌 확장</div>
             </div>
           </div>
         </div>
