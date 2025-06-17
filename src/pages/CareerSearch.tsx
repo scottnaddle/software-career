@@ -1,9 +1,62 @@
 import React, { useState } from 'react';
-import { Search, Filter, Eye, Download, Shield, Calendar, MapPin, Code, Award, ExternalLink, GraduationCap, Briefcase, FileText, User, CheckCircle } from 'lucide-react';
+import { Search, Filter, Eye, Download, Shield, Calendar, MapPin, Code, Award, ExternalLink, GraduationCap, Briefcase, FileText, User, CheckCircle, Edit, Star, Globe, BookOpen, Users } from 'lucide-react';
 
 const CareerSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+
+  // 전문가 프로필 정보
+  const expertProfile = {
+    name: '김글로벌',
+    email: 'kim.global@example.com',
+    phone: '010-1234-5678',
+    position: '시니어 글로벌 비즈니스 매니저',
+    company: '삼성전자',
+    profileImage: null,
+    koicaGrade: '특급',
+    totalExperience: '8년 3개월',
+    verifiedCareers: 12,
+    badges: [
+      {
+        id: 1,
+        name: 'KOICA 특급 전문가',
+        type: 'koica',
+        level: '특급',
+        issueDate: '2023.03.15',
+        color: 'bg-red-100 text-red-800 border-red-200'
+      },
+      {
+        id: 2,
+        name: 'ODA 기초교육 수료',
+        type: 'oda_basic',
+        issueDate: '2022.08.20',
+        color: 'bg-blue-100 text-blue-800 border-blue-200'
+      },
+      {
+        id: 3,
+        name: 'ODA 심화교육 수료',
+        type: 'oda_advanced',
+        issueDate: '2023.01.10',
+        color: 'bg-purple-100 text-purple-800 border-purple-200'
+      },
+      {
+        id: 4,
+        name: '글로벌 프로젝트 관리 인증',
+        type: 'project_management',
+        issueDate: '2023.06.05',
+        color: 'bg-green-100 text-green-800 border-green-200'
+      },
+      {
+        id: 5,
+        name: '국제개발협력 전문가',
+        type: 'development_cooperation',
+        issueDate: '2022.11.30',
+        color: 'bg-orange-100 text-orange-800 border-orange-200'
+      }
+    ],
+    specializations: ['국제개발협력', '프로젝트 관리', '정책 컨설팅', '역량강화'],
+    languages: ['한국어(모국어)', '영어(고급)', '스페인어(중급)']
+  };
 
   const careers = [
     {
@@ -172,6 +225,22 @@ const CareerSearch = () => {
     }
   };
 
+  const getBadgeIcon = (type: string) => {
+    switch (type) {
+      case 'koica':
+        return <Star className="h-4 w-4" />;
+      case 'oda_basic':
+      case 'oda_advanced':
+        return <BookOpen className="h-4 w-4" />;
+      case 'project_management':
+        return <Users className="h-4 w-4" />;
+      case 'development_cooperation':
+        return <Globe className="h-4 w-4" />;
+      default:
+        return <Award className="h-4 w-4" />;
+    }
+  };
+
   const renderCareerSpecificInfo = (career: any) => {
     switch (career.type) {
       case 'education':
@@ -284,6 +353,100 @@ const CareerSearch = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
+        </div>
+
+        {/* Expert Profile Section */}
+        <div className="bg-white rounded-2xl shadow-sm p-8 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900">전문가 프로필</h2>
+            <button className="flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors">
+              <Edit className="h-4 w-4 mr-1" />
+              수정
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Profile Info */}
+            <div className="lg:col-span-2">
+              <div className="flex items-start space-x-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold">
+                  {expertProfile.name.charAt(0)}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <h3 className="text-2xl font-bold text-gray-900">{expertProfile.name}</h3>
+                    <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium border border-red-200">
+                      KOICA {expertProfile.koicaGrade}
+                    </span>
+                  </div>
+                  <p className="text-lg text-gray-700 mb-2">{expertProfile.position}</p>
+                  <p className="text-gray-600 mb-4">{expertProfile.company}</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                    <div>
+                      <span className="font-medium">이메일:</span> {expertProfile.email}
+                    </div>
+                    <div>
+                      <span className="font-medium">연락처:</span> {expertProfile.phone}
+                    </div>
+                    <div>
+                      <span className="font-medium">총 경력:</span> {expertProfile.totalExperience}
+                    </div>
+                    <div>
+                      <span className="font-medium">검증된 경력:</span> {expertProfile.verifiedCareers}개
+                    </div>
+                  </div>
+
+                  {/* Specializations */}
+                  <div className="mt-4">
+                    <span className="text-sm font-medium text-gray-700 mb-2 block">전문 분야:</span>
+                    <div className="flex flex-wrap gap-2">
+                      {expertProfile.specializations.map((spec, index) => (
+                        <span key={index} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Languages */}
+                  <div className="mt-4">
+                    <span className="text-sm font-medium text-gray-700 mb-2 block">언어 능력:</span>
+                    <div className="flex flex-wrap gap-2">
+                      {expertProfile.languages.map((lang, index) => (
+                        <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                          {lang}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Badges Section */}
+            <div className="lg:col-span-1">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">획득 뱃지</h4>
+              <div className="space-y-3">
+                {expertProfile.badges.map((badge) => (
+                  <div key={badge.id} className={`p-4 rounded-xl border ${badge.color}`}>
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0">
+                        {getBadgeIcon(badge.type)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h5 className="font-semibold text-sm mb-1">{badge.name}</h5>
+                        {badge.level && (
+                          <p className="text-xs opacity-80 mb-1">등급: {badge.level}</p>
+                        )}
+                        <p className="text-xs opacity-70">발급일: {badge.issueDate}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
