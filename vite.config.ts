@@ -11,5 +11,8 @@ export default defineConfig({
     commonjsOptions: {
       include: [/@supabase\/supabase-js/, /node_modules/],
     },
+    rollupOptions: {
+      external: []
+    }
   },
 });
