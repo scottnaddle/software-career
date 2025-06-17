@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, Eye, Download, Shield, Calendar, MapPin, Code, Award, ExternalLink } from 'lucide-react';
+import { Search, Filter, Eye, Download, Shield, Calendar, MapPin, Code, Award, ExternalLink, GraduationCap, Briefcase, FileText, User } from 'lucide-react';
 
 const CareerSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,19 +20,23 @@ const CareerSearch = () => {
       type: 'project',
       technologies: ['Java', 'Spring Boot', 'MySQL', 'Redis'],
       description: '대규모 전자상거래 플랫폼의 주문 처리 시스템 개발 및 성능 최적화',
-      verificationDate: '2024.01.15'
+      verificationDate: '2024.01.15',
+      achievements: ['시스템 성능 30% 향상', '주문 처리량 2배 증가']
     },
     {
       id: 2,
-      title: '모바일 앱 개발 부트캠프',
-      company: '패스트캠퍼스',
-      period: '2022.09 - 2023.02',
-      role: '수강생',
+      title: '컴퓨터공학과',
+      company: '서울대학교',
+      period: '2018.03 - 2022.02',
+      role: '학사 졸업',
       status: 'verified',
       type: 'education',
-      technologies: ['React Native', 'JavaScript', 'Firebase'],
-      description: '6개월 집중 모바일 앱 개발 과정 수료 (우수 수료생)',
-      verificationDate: '2023.03.10'
+      technologies: [],
+      description: '컴퓨터공학 전공, 학점 3.8/4.5 (magna cum laude)',
+      verificationDate: '2022.03.10',
+      degree: '학사',
+      gpa: '3.8/4.5',
+      activities: ['프로그래밍 동아리 회장', '해커톤 대회 우승']
     },
     {
       id: 3,
@@ -40,11 +44,13 @@ const CareerSearch = () => {
       company: '한국산업인력공단',
       period: '2022.08.20',
       role: '자격증 취득',
-      status: 'pending',
+      status: 'verified',
       type: 'certificate',
       technologies: [],
-      description: '정보처리기사 자격증 취득',
-      verificationDate: null
+      description: '정보처리기사 자격증 취득 (필기 85점, 실기 합격)',
+      verificationDate: '2022.09.05',
+      certificateNumber: 'KQ22080012345',
+      issueDate: '2022.08.20'
     },
     {
       id: 4,
@@ -56,7 +62,52 @@ const CareerSearch = () => {
       type: 'project',
       technologies: ['Python', 'FastAPI', 'React', 'PostgreSQL'],
       description: '자연어 처리 기반 고객 상담 챗봇 서비스 개발',
-      verificationDate: '2022.09.05'
+      verificationDate: '2022.09.05',
+      achievements: ['고객 만족도 95% 달성', '응답 시간 50% 단축']
+    },
+    {
+      id: 5,
+      title: '네이버',
+      company: '네이버',
+      period: '2022.09 - 2024.01',
+      role: '백엔드 개발자',
+      status: 'verified',
+      type: 'experience',
+      technologies: ['Java', 'Spring Boot', 'Kafka', 'Redis', 'MySQL'],
+      description: '검색 서비스 백엔드 개발 및 대용량 트래픽 처리 시스템 구축',
+      verificationDate: '2024.02.01',
+      department: '검색개발팀',
+      jobType: '정규직',
+      achievements: ['검색 응답 속도 40% 개선', '시스템 안정성 99.9% 달성']
+    },
+    {
+      id: 6,
+      title: '모바일 앱 개발 부트캠프',
+      company: '패스트캠퍼스',
+      period: '2021.09 - 2022.02',
+      role: '수강생',
+      status: 'pending',
+      type: 'education',
+      technologies: ['React Native', 'JavaScript', 'Firebase'],
+      description: '6개월 집중 모바일 앱 개발 과정 수료 (우수 수료생)',
+      verificationDate: null,
+      completionRate: '100%',
+      finalProject: '음식 배달 앱 개발'
+    },
+    {
+      id: 7,
+      title: 'AWS Solutions Architect',
+      company: 'Amazon Web Services',
+      period: '2023.05.15',
+      role: '자격증 취득',
+      status: 'verified',
+      type: 'certificate',
+      technologies: [],
+      description: 'AWS 솔루션 아키텍트 어소시에이트 자격증 취득',
+      verificationDate: '2023.06.01',
+      certificateNumber: 'AWS-SAA-2023-051234',
+      issueDate: '2023.05.15',
+      expiryDate: '2026.05.15'
     }
   ];
 
@@ -90,13 +141,15 @@ const CareerSearch = () => {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'project':
-        return <Code className="h-4 w-4" />;
+        return <Code className="h-5 w-5 text-blue-600" />;
       case 'education':
-        return <Award className="h-4 w-4" />;
+        return <GraduationCap className="h-5 w-5 text-green-600" />;
       case 'certificate':
-        return <Shield className="h-4 w-4" />;
+        return <Award className="h-5 w-5 text-purple-600" />;
+      case 'experience':
+        return <Briefcase className="h-5 w-5 text-orange-600" />;
       default:
-        return <Code className="h-4 w-4" />;
+        return <FileText className="h-5 w-5 text-gray-600" />;
     }
   };
 
@@ -105,11 +158,103 @@ const CareerSearch = () => {
       case 'project':
         return '프로젝트';
       case 'education':
-        return '교육';
+        return '학력';
       case 'certificate':
         return '자격증';
+      case 'experience':
+        return '근무경력';
       default:
         return '기타';
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'project':
+        return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'education':
+        return 'bg-green-50 text-green-700 border-green-200';
+      case 'certificate':
+        return 'bg-purple-50 text-purple-700 border-purple-200';
+      case 'experience':
+        return 'bg-orange-50 text-orange-700 border-orange-200';
+      default:
+        return 'bg-gray-50 text-gray-700 border-gray-200';
+    }
+  };
+
+  const renderCareerSpecificInfo = (career: any) => {
+    switch (career.type) {
+      case 'education':
+        return (
+          <div className="mt-3 space-y-2">
+            {career.degree && (
+              <div className="text-sm text-gray-600">
+                <span className="font-medium">학위:</span> {career.degree}
+              </div>
+            )}
+            {career.gpa && (
+              <div className="text-sm text-gray-600">
+                <span className="font-medium">학점:</span> {career.gpa}
+              </div>
+            )}
+            {career.activities && (
+              <div className="text-sm text-gray-600">
+                <span className="font-medium">주요 활동:</span> {career.activities}
+              </div>
+            )}
+            {career.completionRate && (
+              <div className="text-sm text-gray-600">
+                <span className="font-medium">수료율:</span> {career.completionRate}
+              </div>
+            )}
+            {career.finalProject && (
+              <div className="text-sm text-gray-600">
+                <span className="font-medium">최종 프로젝트:</span> {career.finalProject}
+              </div>
+            )}
+          </div>
+        );
+      
+      case 'certificate':
+        return (
+          <div className="mt-3 space-y-2">
+            {career.certificateNumber && (
+              <div className="text-sm text-gray-600">
+                <span className="font-medium">자격증 번호:</span> {career.certificateNumber}
+              </div>
+            )}
+            {career.issueDate && (
+              <div className="text-sm text-gray-600">
+                <span className="font-medium">발급일:</span> {career.issueDate}
+              </div>
+            )}
+            {career.expiryDate && (
+              <div className="text-sm text-gray-600">
+                <span className="font-medium">유효기간:</span> {career.expiryDate}
+              </div>
+            )}
+          </div>
+        );
+      
+      case 'experience':
+        return (
+          <div className="mt-3 space-y-2">
+            {career.department && (
+              <div className="text-sm text-gray-600">
+                <span className="font-medium">부서:</span> {career.department}
+              </div>
+            )}
+            {career.jobType && (
+              <div className="text-sm text-gray-600">
+                <span className="font-medium">고용형태:</span> {career.jobType}
+              </div>
+            )}
+          </div>
+        );
+      
+      default:
+        return null;
     }
   };
 
@@ -122,6 +267,12 @@ const CareerSearch = () => {
     return matchesSearch && matchesStatus && matchesType;
   });
 
+  // 통계 계산
+  const totalCareers = careers.length;
+  const verifiedCareers = careers.filter(c => c.status === 'verified').length;
+  const pendingCareers = careers.filter(c => c.status === 'pending').length;
+  const availableForCertificate = careers.filter(c => c.status === 'verified').length;
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -130,7 +281,7 @@ const CareerSearch = () => {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">경력 조회</h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              등록한 경력의 검증 상태를 확인하고 관리하세요.
+              등록한 모든 경력의 검증 상태를 확인하고 관리하세요.
               검증 완료된 경력은 언제든지 증명서로 발급받을 수 있습니다.
             </p>
           </div>
@@ -166,8 +317,9 @@ const CareerSearch = () => {
                 onChange={(e) => setSelectedFilters({...selectedFilters, type: e.target.value})}
               >
                 <option value="all">전체 유형</option>
+                <option value="experience">근무경력</option>
                 <option value="project">프로젝트</option>
-                <option value="education">교육</option>
+                <option value="education">학력</option>
                 <option value="certificate">자격증</option>
               </select>
             </div>
@@ -179,10 +331,10 @@ const CareerSearch = () => {
           <div className="bg-white rounded-xl p-6 shadow-sm">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                <Code className="h-6 w-6 text-blue-600" />
+                <FileText className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">12</div>
+                <div className="text-2xl font-bold text-gray-900">{totalCareers}</div>
                 <div className="text-sm text-gray-600">총 경력</div>
               </div>
             </div>
@@ -194,7 +346,7 @@ const CareerSearch = () => {
                 <Shield className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">9</div>
+                <div className="text-2xl font-bold text-gray-900">{verifiedCareers}</div>
                 <div className="text-sm text-gray-600">검증완료</div>
               </div>
             </div>
@@ -206,7 +358,7 @@ const CareerSearch = () => {
                 <Calendar className="h-6 w-6 text-yellow-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">2</div>
+                <div className="text-2xl font-bold text-gray-900">{pendingCareers}</div>
                 <div className="text-sm text-gray-600">검증대기</div>
               </div>
             </div>
@@ -218,7 +370,7 @@ const CareerSearch = () => {
                 <Download className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">7</div>
+                <div className="text-2xl font-bold text-gray-900">{availableForCertificate}</div>
                 <div className="text-sm text-gray-600">발급가능</div>
               </div>
             </div>
@@ -232,14 +384,14 @@ const CareerSearch = () => {
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${getTypeColor(career.type).replace('text-', 'bg-').replace('-700', '-100')}`}>
                       {getTypeIcon(career.type)}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
                         <h3 className="text-lg font-semibold text-gray-900">{career.title}</h3>
                         {getStatusBadge(career.status)}
-                        <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getTypeColor(career.type)}`}>
                           {getTypeLabel(career.type)}
                         </span>
                       </div>
@@ -258,8 +410,12 @@ const CareerSearch = () => {
                       </div>
                       <p className="text-gray-600 text-sm mb-3">{career.description}</p>
                       
+                      {/* Career Type Specific Information */}
+                      {renderCareerSpecificInfo(career)}
+                      
                       {career.technologies.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-3">
+                        <div className="flex flex-wrap gap-2 mb-3 mt-3">
+                          <span className="text-sm font-medium text-gray-700 mr-2">기술 스택:</span>
                           {career.technologies.map((tech, index) => (
                             <span
                               key={index}
@@ -270,9 +426,20 @@ const CareerSearch = () => {
                           ))}
                         </div>
                       )}
+
+                      {career.achievements && career.achievements.length > 0 && (
+                        <div className="mt-3">
+                          <span className="text-sm font-medium text-gray-700 mr-2">주요 성과:</span>
+                          <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
+                            {career.achievements.map((achievement, index) => (
+                              <li key={index}>{achievement}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                       
                       {career.verificationDate && (
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-500 mt-3">
                           검증일: {career.verificationDate}
                         </div>
                       )}
