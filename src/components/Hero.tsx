@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Shield, FileText, Award, ArrowRight, CheckCircle } from 'lucide-react';
 
 const Hero = () => {
@@ -22,13 +23,19 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-200 flex items-center justify-center">
+            <Link 
+              to="/career-registration"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-200 flex items-center justify-center"
+            >
               경력 등록하기
               <ArrowRight className="h-5 w-5 ml-2" />
-            </button>
-            <button className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200">
+            </Link>
+            <Link 
+              to="/guide"
+              className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200"
+            >
               서비스 둘러보기
-            </button>
+            </Link>
           </div>
 
           {/* Trust Indicators */}
@@ -58,9 +65,12 @@ const Hero = () => {
             <p className="text-gray-600 mb-6">
               글로벌 비즈니스 프로젝트, 교육, 자격증을 등록하여 전문가 검증을 받으세요.
             </p>
-            <button className="text-blue-600 font-semibold hover:text-blue-700 flex items-center">
+            <Link 
+              to="/career-registration"
+              className="text-blue-600 font-semibold hover:text-blue-700 flex items-center"
+            >
               시작하기 <ArrowRight className="h-4 w-4 ml-1" />
-            </button>
+            </Link>
           </div>
 
           <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 group">
@@ -71,9 +81,12 @@ const Hero = () => {
             <p className="text-gray-600 mb-6">
               업계 전문가가 귀하의 경력을 검토하고 블록체인 기술로 안전하게 인증합니다.
             </p>
-            <button className="text-green-600 font-semibold hover:text-green-700 flex items-center">
+            <Link 
+              to="/guide"
+              className="text-green-600 font-semibold hover:text-green-700 flex items-center"
+            >
               자세히 보기 <ArrowRight className="h-4 w-4 ml-1" />
-            </button>
+            </Link>
           </div>
 
           <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 group">
@@ -84,9 +97,12 @@ const Hero = () => {
             <p className="text-gray-600 mb-6">
               검증된 글로벌 비즈니스 경험을 바탕으로 공식 경력증명서를 발급받으세요.
             </p>
-            <button className="text-purple-600 font-semibold hover:text-purple-700 flex items-center">
+            <Link 
+              to="/certificate-issue"
+              className="text-purple-600 font-semibold hover:text-purple-700 flex items-center"
+            >
               발급하기 <ArrowRight className="h-4 w-4 ml-1" />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
