@@ -1,32 +1,35 @@
 import React from 'react';
 import { TrendingUp, Users, Award, Building, Globe, Clock } from 'lucide-react';
+import { useStatistics } from '../hooks/useStatistics';
 
 const Statistics = () => {
+  const { statistics, loading } = useStatistics();
+
   const stats = [
     {
       icon: Users,
-      number: '50,247',
+      number: statistics.total_users?.toLocaleString() || '50,247',
       label: '등록된 전문가',
       description: '검증된 글로벌 비즈니스 전문가 참여',
       growth: '+15%'
     },
     {
       icon: Award,
-      number: '127,893',
+      number: statistics.verified_careers?.toLocaleString() || '127,893',
       label: '검증된 경력',
       description: '업계 전문가가 검토한 신뢰할 수 있는 경력',
       growth: '+23%'
     },
     {
       icon: Building,
-      number: '2,847',
+      number: statistics.partner_companies?.toLocaleString() || '2,847',
       label: '파트너 기업',
       description: '경력 검증 서비스를 이용하는 기업',
       growth: '+31%'
     },
     {
       icon: Globe,
-      number: '15',
+      number: statistics.supported_countries?.toString() || '15',
       label: '지원 국가',
       description: '글로벌 표준 경력증명서 인정 국가',
       growth: '+3'
@@ -53,6 +56,21 @@ const Statistics = () => {
       color: 'purple'
     }
   ];
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-300 rounded w-64 mx-auto mb-4"></div>
+              <div className="h-4 bg-gray-300 rounded w-96 mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-gray-50">
