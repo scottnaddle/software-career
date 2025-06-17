@@ -1,10 +1,44 @@
 import React, { useState } from 'react';
-import { Plus, Save, FileText, Calendar, MapPin, Users, Code, Award, Trash2, CreditCard, Clock, Shield } from 'lucide-react';
+import { Plus, Save, FileText, Calendar, MapPin, Users, Code, Award, Trash2, CreditCard, Clock, Shield, Building, GraduationCap, Briefcase } from 'lucide-react';
 
 const CareerRegistration = () => {
-  const [activeTab, setActiveTab] = useState('project');
+  const [activeTab, setActiveTab] = useState('work-experience');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentType, setPaymentType] = useState('');
+
+  // 근무경력 상태
+  const [workExperiences, setWorkExperiences] = useState([
+    {
+      id: 1,
+      company: '',
+      department: '',
+      position: '',
+      startDate: '',
+      endDate: '',
+      isCurrent: false,
+      jobType: 'full-time',
+      responsibilities: '',
+      achievements: [],
+      technologies: []
+    }
+  ]);
+
+  // 학력 상태
+  const [educations, setEducations] = useState([
+    {
+      id: 1,
+      schoolName: '',
+      major: '',
+      degree: 'bachelor',
+      startDate: '',
+      endDate: '',
+      isGraduated: true,
+      gpa: '',
+      activities: ''
+    }
+  ]);
+
+  // 프로젝트 상태
   const [projects, setProjects] = useState([
     {
       id: 1,
@@ -17,6 +51,71 @@ const CareerRegistration = () => {
       achievements: []
     }
   ]);
+
+  // 자격증 상태
+  const [certificates, setCertificates] = useState([
+    {
+      id: 1,
+      name: '',
+      issuer: '',
+      issueDate: '',
+      expiryDate: '',
+      certificateNumber: '',
+      description: ''
+    }
+  ]);
+
+  const addWorkExperience = () => {
+    const newExperience = {
+      id: Date.now(),
+      company: '',
+      department: '',
+      position: '',
+      startDate: '',
+      endDate: '',
+      isCurrent: false,
+      jobType: 'full-time',
+      responsibilities: '',
+      achievements: [],
+      technologies: []
+    };
+    setWorkExperiences([...workExperiences, newExperience]);
+  };
+
+  const removeWorkExperience = (id: number) => {
+    setWorkExperiences(workExperiences.filter(exp => exp.id !== id));
+  };
+
+  const updateWorkExperience = (id: number, field: string, value: any) => {
+    setWorkExperiences(workExperiences.map(exp => 
+      exp.id === id ? { ...exp, [field]: value } : exp
+    ));
+  };
+
+  const addEducation = () => {
+    const newEducation = {
+      id: Date.now(),
+      schoolName: '',
+      major: '',
+      degree: 'bachelor',
+      startDate: '',
+      endDate: '',
+      isGraduated: true,
+      gpa: '',
+      activities: ''
+    };
+    setEducations([...educations, newEducation]);
+  };
+
+  const removeEducation = (id: number) => {
+    setEducations(educations.filter(edu => edu.id !== id));
+  };
+
+  const updateEducation = (id: number, field: string, value: any) => {
+    setEducations(educations.map(edu => 
+      edu.id === id ? { ...edu, [field]: value } : edu
+    ));
+  };
 
   const addProject = () => {
     const newProject = {
@@ -42,16 +141,39 @@ const CareerRegistration = () => {
     ));
   };
 
+  const addCertificate = () => {
+    const newCertificate = {
+      id: Date.now(),
+      name: '',
+      issuer: '',
+      issueDate: '',
+      expiryDate: '',
+      certificateNumber: '',
+      description: ''
+    };
+    setCertificates([...certificates, newCertificate]);
+  };
+
+  const removeCertificate = (id: number) => {
+    setCertificates(certificates.filter(cert => cert.id !== id));
+  };
+
+  const updateCertificate = (id: number, field: string, value: any) => {
+    setCertificates(certificates.map(cert => 
+      cert.id === id ? { ...cert, [field]: value } : cert
+    ));
+  };
+
   const handleVerificationRequest = (type: 'standard' | 'express') => {
     setPaymentType(type);
     setShowPaymentModal(true);
   };
 
   const tabs = [
+    { id: 'work-experience', name: '근무경력', icon: Briefcase },
+    { id: 'education', name: '학력', icon: GraduationCap },
     { id: 'project', name: '프로젝트 경력', icon: Code },
-    { id: 'education', name: '교육 이수', icon: FileText },
-    { id: 'certificate', name: '자격증', icon: Award },
-    { id: 'experience', name: '기타 경력', icon: Users }
+    { id: 'certificate', name: '자격증', icon: Award }
   ];
 
   const PaymentModal = () => {
@@ -225,7 +347,7 @@ const CareerRegistration = () => {
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">경력 등록</h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              소프트웨어 개발 경력을 상세히 등록하여 전문가 검증을 받으세요.
+              글로벌 비즈니스 전문가 경력을 상세히 등록하여 전문가 검증을 받으세요.
               정확하고 구체적인 정보를 입력할수록 더 신뢰할 수 있는 경력 인증을 받을 수 있습니다.
             </p>
           </div>
@@ -316,15 +438,20 @@ const CareerRegistration = () => {
                         {tabs.find(tab => tab.id === activeTab)?.name}
                       </h2>
                       <p className="text-gray-600 text-sm">
+                        {activeTab === 'work-experience' && '회사별 근무 경력을 등록하세요'}
+                        {activeTab === 'education' && '대학 이상의 학력을 등록하세요'}
                         {activeTab === 'project' && '개발 프로젝트 경력을 등록하세요'}
-                        {activeTab === 'education' && '교육 과정 이수 내역을 등록하세요'}
                         {activeTab === 'certificate' && '취득한 자격증을 등록하세요'}
-                        {activeTab === 'experience' && '기타 관련 경력을 등록하세요'}
                       </p>
                     </div>
                   </div>
                   <button
-                    onClick={addProject}
+                    onClick={() => {
+                      if (activeTab === 'work-experience') addWorkExperience();
+                      else if (activeTab === 'education') addEducation();
+                      else if (activeTab === 'project') addProject();
+                      else if (activeTab === 'certificate') addCertificate();
+                    }}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center text-sm font-medium transition-colors"
                   >
                     <Plus className="h-4 w-4 mr-2" />
@@ -335,6 +462,309 @@ const CareerRegistration = () => {
 
               {/* Form Content */}
               <div className="p-6">
+                {/* 근무경력 탭 */}
+                {activeTab === 'work-experience' && (
+                  <div className="space-y-8">
+                    {workExperiences.map((experience, index) => (
+                      <div key={experience.id} className="border border-gray-200 rounded-xl p-6">
+                        <div className="flex items-center justify-between mb-6">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            근무경력 #{index + 1}
+                          </h3>
+                          {workExperiences.length > 1 && (
+                            <button
+                              onClick={() => removeWorkExperience(experience.id)}
+                              className="text-red-600 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              회사명 *
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="회사명을 입력하세요"
+                              value={experience.company}
+                              onChange={(e) => updateWorkExperience(experience.id, 'company', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              부서/팀
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="부서 또는 팀명을 입력하세요"
+                              value={experience.department}
+                              onChange={(e) => updateWorkExperience(experience.id, 'department', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              직책/직위 *
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="직책 또는 직위를 입력하세요"
+                              value={experience.position}
+                              onChange={(e) => updateWorkExperience(experience.id, 'position', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              고용형태
+                            </label>
+                            <select
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              value={experience.jobType}
+                              onChange={(e) => updateWorkExperience(experience.id, 'jobType', e.target.value)}
+                            >
+                              <option value="full-time">정규직</option>
+                              <option value="contract">계약직</option>
+                              <option value="part-time">파트타임</option>
+                              <option value="freelance">프리랜서</option>
+                              <option value="intern">인턴</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              입사일 *
+                            </label>
+                            <input
+                              type="date"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              value={experience.startDate}
+                              onChange={(e) => updateWorkExperience(experience.id, 'startDate', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              퇴사일
+                            </label>
+                            <div className="space-y-2">
+                              <input
+                                type="date"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                value={experience.endDate}
+                                onChange={(e) => updateWorkExperience(experience.id, 'endDate', e.target.value)}
+                                disabled={experience.isCurrent}
+                              />
+                              <label className="flex items-center">
+                                <input
+                                  type="checkbox"
+                                  checked={experience.isCurrent}
+                                  onChange={(e) => {
+                                    updateWorkExperience(experience.id, 'isCurrent', e.target.checked);
+                                    if (e.target.checked) {
+                                      updateWorkExperience(experience.id, 'endDate', '');
+                                    }
+                                  }}
+                                  className="h-4 w-4 text-blue-600 rounded mr-2"
+                                />
+                                <span className="text-sm text-gray-600">현재 재직중</span>
+                              </label>
+                            </div>
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              주요 업무 및 책임 *
+                            </label>
+                            <textarea
+                              rows={4}
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="담당했던 주요 업무와 책임을 구체적으로 작성하세요"
+                              value={experience.responsibilities}
+                              onChange={(e) => updateWorkExperience(experience.id, 'responsibilities', e.target.value)}
+                            />
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              사용 기술 스택
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="예: Java, Spring Boot, MySQL, AWS (쉼표로 구분)"
+                            />
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              주요 성과 및 결과
+                            </label>
+                            <textarea
+                              rows={3}
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="업무를 통해 달성한 성과, 개선된 지표, 수상 경력 등을 작성하세요"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 학력 탭 */}
+                {activeTab === 'education' && (
+                  <div className="space-y-8">
+                    {educations.map((education, index) => (
+                      <div key={education.id} className="border border-gray-200 rounded-xl p-6">
+                        <div className="flex items-center justify-between mb-6">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            학력 #{index + 1}
+                          </h3>
+                          {educations.length > 1 && (
+                            <button
+                              onClick={() => removeEducation(education.id)}
+                              className="text-red-600 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              학교명 *
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="대학교명을 입력하세요"
+                              value={education.schoolName}
+                              onChange={(e) => updateEducation(education.id, 'schoolName', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              전공 *
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="전공을 입력하세요"
+                              value={education.major}
+                              onChange={(e) => updateEducation(education.id, 'major', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              학위 *
+                            </label>
+                            <select
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              value={education.degree}
+                              onChange={(e) => updateEducation(education.id, 'degree', e.target.value)}
+                            >
+                              <option value="bachelor">학사</option>
+                              <option value="master">석사</option>
+                              <option value="doctorate">박사</option>
+                              <option value="associate">전문학사</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              학점 (GPA)
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="예: 3.8/4.5"
+                              value={education.gpa}
+                              onChange={(e) => updateEducation(education.id, 'gpa', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              입학일 *
+                            </label>
+                            <input
+                              type="date"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              value={education.startDate}
+                              onChange={(e) => updateEducation(education.id, 'startDate', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              졸업일
+                            </label>
+                            <div className="space-y-2">
+                              <input
+                                type="date"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                value={education.endDate}
+                                onChange={(e) => updateEducation(education.id, 'endDate', e.target.value)}
+                                disabled={!education.isGraduated}
+                              />
+                              <div className="flex space-x-4">
+                                <label className="flex items-center">
+                                  <input
+                                    type="radio"
+                                    name={`graduation-${education.id}`}
+                                    checked={education.isGraduated}
+                                    onChange={() => updateEducation(education.id, 'isGraduated', true)}
+                                    className="h-4 w-4 text-blue-600 mr-2"
+                                  />
+                                  <span className="text-sm text-gray-600">졸업</span>
+                                </label>
+                                <label className="flex items-center">
+                                  <input
+                                    type="radio"
+                                    name={`graduation-${education.id}`}
+                                    checked={!education.isGraduated}
+                                    onChange={() => {
+                                      updateEducation(education.id, 'isGraduated', false);
+                                      updateEducation(education.id, 'endDate', '');
+                                    }}
+                                    className="h-4 w-4 text-blue-600 mr-2"
+                                  />
+                                  <span className="text-sm text-gray-600">재학중/중퇴</span>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              주요 활동 및 성과
+                            </label>
+                            <textarea
+                              rows={3}
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="동아리, 학회, 프로젝트, 수상 경력 등을 작성하세요"
+                              value={education.activities}
+                              onChange={(e) => updateEducation(education.id, 'activities', e.target.value)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 프로젝트 경력 탭 */}
                 {activeTab === 'project' && (
                   <div className="space-y-8">
                     {projects.map((project, index) => (
@@ -472,42 +902,120 @@ const CareerRegistration = () => {
                   </div>
                 )}
 
-                {activeTab === 'education' && (
-                  <div className="text-center py-12">
-                    <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">교육 이수 내역 등록</h3>
-                    <p className="text-gray-600 mb-6">
-                      참여한 교육 과정, 부트캠프, 온라인 강의 등을 등록하세요.
-                    </p>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                      교육 과정 추가
-                    </button>
-                  </div>
-                )}
-
+                {/* 자격증 탭 */}
                 {activeTab === 'certificate' && (
-                  <div className="text-center py-12">
-                    <Award className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">자격증 등록</h3>
-                    <p className="text-gray-600 mb-6">
-                      취득한 IT 관련 자격증을 등록하여 전문성을 인증받으세요.
-                    </p>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                      자격증 추가
-                    </button>
-                  </div>
-                )}
+                  <div className="space-y-8">
+                    {certificates.map((certificate, index) => (
+                      <div key={certificate.id} className="border border-gray-200 rounded-xl p-6">
+                        <div className="flex items-center justify-between mb-6">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            자격증 #{index + 1}
+                          </h3>
+                          {certificates.length > 1 && (
+                            <button
+                              onClick={() => removeCertificate(certificate.id)}
+                              className="text-red-600 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
 
-                {activeTab === 'experience' && (
-                  <div className="text-center py-12">
-                    <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">기타 경력 등록</h3>
-                    <p className="text-gray-600 mb-6">
-                      오픈소스 기여, 기술 블로그, 컨퍼런스 발표 등 기타 경력을 등록하세요.
-                    </p>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                      기타 경력 추가
-                    </button>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              자격증명 *
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="자격증명을 입력하세요"
+                              value={certificate.name}
+                              onChange={(e) => updateCertificate(certificate.id, 'name', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              발급기관 *
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="발급기관을 입력하세요"
+                              value={certificate.issuer}
+                              onChange={(e) => updateCertificate(certificate.id, 'issuer', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              취득일 *
+                            </label>
+                            <input
+                              type="date"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              value={certificate.issueDate}
+                              onChange={(e) => updateCertificate(certificate.id, 'issueDate', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              유효기간
+                            </label>
+                            <input
+                              type="date"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="유효기간이 없으면 비워두세요"
+                              value={certificate.expiryDate}
+                              onChange={(e) => updateCertificate(certificate.id, 'expiryDate', e.target.value)}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              자격증 번호
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="자격증 번호를 입력하세요"
+                              value={certificate.certificateNumber}
+                              onChange={(e) => updateCertificate(certificate.id, 'certificateNumber', e.target.value)}
+                            />
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              설명
+                            </label>
+                            <textarea
+                              rows={3}
+                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="자격증에 대한 추가 설명이나 취득 배경을 작성하세요"
+                              value={certificate.description}
+                              onChange={(e) => updateCertificate(certificate.id, 'description', e.target.value)}
+                            />
+                          </div>
+
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              자격증 사본 첨부
+                            </label>
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                              <Award className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                              <p className="text-sm text-gray-600 mb-2">
+                                자격증 사본을 첨부하세요 (PDF, JPG, PNG)
+                              </p>
+                              <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                파일 선택
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
