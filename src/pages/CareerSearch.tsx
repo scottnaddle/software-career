@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Filter, Eye, Download, Shield, Calendar, MapPin, Code, Award, ExternalLink, GraduationCap, Briefcase, FileText, User } from 'lucide-react';
+import { Search, Filter, Eye, Download, Shield, Calendar, MapPin, Code, Award, ExternalLink, GraduationCap, Briefcase, FileText, User, CheckCircle } from 'lucide-react';
 
 const CareerSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState({
-    status: 'all',
-    type: 'all',
-    period: 'all'
-  });
+  const [activeTab, setActiveTab] = useState('all');
 
   const careers = [
     {
@@ -111,6 +107,14 @@ const CareerSearch = () => {
     }
   ];
 
+  const tabs = [
+    { id: 'all', name: '전체', icon: FileText, count: careers.length },
+    { id: 'experience', name: '근무경력', icon: Briefcase, count: careers.filter(c => c.type === 'experience').length },
+    { id: 'project', name: '프로젝트', icon: Code, count: careers.filter(c => c.type === 'project').length },
+    { id: 'education', name: '학력', icon: GraduationCap, count: careers.filter(c => c.type === 'education').length },
+    { id: 'certificate', name: '자격증', icon: Award, count: careers.filter(c => c.type === 'certificate').length }
+  ];
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'verified':
@@ -150,21 +154,6 @@ const CareerSearch = () => {
         return <Briefcase className="h-5 w-5 text-orange-600" />;
       default:
         return <FileText className="h-5 w-5 text-gray-600" />;
-    }
-  };
-
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case 'project':
-        return '프로젝트';
-      case 'education':
-        return '학력';
-      case 'certificate':
-        return '자격증';
-      case 'experience':
-        return '근무경력';
-      default:
-        return '기타';
     }
   };
 
@@ -261,10 +250,9 @@ const CareerSearch = () => {
   const filteredCareers = careers.filter(career => {
     const matchesSearch = career.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          career.company.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = selectedFilters.status === 'all' || career.status === selectedFilters.status;
-    const matchesType = selectedFilters.type === 'all' || career.type === selectedFilters.type;
+    const matchesTab = activeTab === 'all' || career.type === activeTab;
     
-    return matchesSearch && matchesStatus && matchesType;
+    return matchesSearch && matchesTab;
   });
 
   // 통계 계산
@@ -286,43 +274,16 @@ const CareerSearch = () => {
             </p>
           </div>
 
-          {/* Search and Filters */}
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="경력명, 회사명으로 검색..."
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            
-            <div className="flex gap-4">
-              <select
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                value={selectedFilters.status}
-                onChange={(e) => setSelectedFilters({...selectedFilters, status: e.target.value})}
-              >
-                <option value="all">전체 상태</option>
-                <option value="verified">검증완료</option>
-                <option value="pending">검증대기</option>
-                <option value="rejected">검증반려</option>
-              </select>
-              
-              <select
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                value={selectedFilters.type}
-                onChange={(e) => setSelectedFilters({...selectedFilters, type: e.target.value})}
-              >
-                <option value="all">전체 유형</option>
-                <option value="experience">근무경력</option>
-                <option value="project">프로젝트</option>
-                <option value="education">학력</option>
-                <option value="certificate">자격증</option>
-              </select>
-            </div>
+          {/* Search */}
+          <div className="max-w-md mx-auto relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="경력명, 회사명으로 검색..."
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
         </div>
 
@@ -377,119 +338,177 @@ const CareerSearch = () => {
           </div>
         </div>
 
-        {/* Career List */}
-        <div className="space-y-6">
-          {filteredCareers.map((career) => (
-            <div key={career.id} className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-start space-x-4">
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${getTypeColor(career.type).replace('text-', 'bg-').replace('-700', '-100')}`}>
-                      {getTypeIcon(career.type)}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">{career.title}</h3>
-                        {getStatusBadge(career.status)}
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getTypeColor(career.type)}`}>
-                          {getTypeLabel(career.type)}
-                        </span>
-                      </div>
-                      <div className="flex items-center text-gray-600 text-sm space-x-4 mb-2">
-                        <div className="flex items-center">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          {career.company}
-                        </div>
-                        <div className="flex items-center">
-                          <Calendar className="h-4 w-4 mr-1" />
-                          {career.period}
-                        </div>
-                        <div className="font-medium text-blue-600">
-                          {career.role}
-                        </div>
-                      </div>
-                      <p className="text-gray-600 text-sm mb-3">{career.description}</p>
-                      
-                      {/* Career Type Specific Information */}
-                      {renderCareerSpecificInfo(career)}
-                      
-                      {career.technologies.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-3 mt-3">
-                          <span className="text-sm font-medium text-gray-700 mr-2">기술 스택:</span>
-                          {career.technologies.map((tech, index) => (
-                            <span
-                              key={index}
-                              className="px-2 py-1 bg-blue-50 text-blue-600 rounded-md text-xs font-medium"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+        {/* Tabs */}
+        <div className="bg-white rounded-2xl shadow-sm mb-8">
+          <div className="border-b border-gray-200">
+            <nav className="flex space-x-8 px-6" aria-label="Tabs">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center transition-colors ${
+                    activeTab === tab.id
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <tab.icon className="h-5 w-5 mr-2" />
+                  {tab.name}
+                  <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${
+                    activeTab === tab.id
+                      ? 'bg-blue-100 text-blue-600'
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {tab.count}
+                  </span>
+                </button>
+              ))}
+            </nav>
+          </div>
 
-                      {career.achievements && career.achievements.length > 0 && (
-                        <div className="mt-3">
-                          <span className="text-sm font-medium text-gray-700 mr-2">주요 성과:</span>
-                          <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
-                            {career.achievements.map((achievement, index) => (
-                              <li key={index}>{achievement}</li>
-                            ))}
-                          </ul>
+          {/* Tab Content */}
+          <div className="p-6">
+            {filteredCareers.length > 0 ? (
+              <div className="space-y-6">
+                {filteredCareers.map((career) => (
+                  <div key={career.id} className="bg-gray-50 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-start space-x-4">
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${getTypeColor(career.type).replace('text-', 'bg-').replace('-700', '-100')}`}>
+                          {getTypeIcon(career.type)}
                         </div>
-                      )}
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <h3 className="text-lg font-semibold text-gray-900">{career.title}</h3>
+                            {getStatusBadge(career.status)}
+                          </div>
+                          <div className="flex items-center text-gray-600 text-sm space-x-4 mb-2">
+                            <div className="flex items-center">
+                              <MapPin className="h-4 w-4 mr-1" />
+                              {career.company}
+                            </div>
+                            <div className="flex items-center">
+                              <Calendar className="h-4 w-4 mr-1" />
+                              {career.period}
+                            </div>
+                            <div className="font-medium text-blue-600">
+                              {career.role}
+                            </div>
+                          </div>
+                          <p className="text-gray-600 text-sm mb-3">{career.description}</p>
+                          
+                          {/* Career Type Specific Information */}
+                          {renderCareerSpecificInfo(career)}
+                          
+                          {career.technologies.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-3 mt-3">
+                              <span className="text-sm font-medium text-gray-700 mr-2">기술 스택:</span>
+                              {career.technologies.map((tech, index) => (
+                                <span
+                                  key={index}
+                                  className="px-2 py-1 bg-blue-50 text-blue-600 rounded-md text-xs font-medium"
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {career.achievements && career.achievements.length > 0 && (
+                            <div className="mt-3">
+                              <span className="text-sm font-medium text-gray-700 mr-2">주요 성과:</span>
+                              <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
+                                {career.achievements.map((achievement, index) => (
+                                  <li key={index}>{achievement}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          
+                          {career.verificationDate && (
+                            <div className="text-xs text-gray-500 mt-3">
+                              검증일: {career.verificationDate}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                      <div className="flex items-center space-x-4">
+                        <button className="flex items-center text-gray-600 hover:text-blue-600 text-sm font-medium transition-colors">
+                          <Eye className="h-4 w-4 mr-1" />
+                          상세보기
+                        </button>
+                        {career.status === 'verified' && (
+                          <button className="flex items-center text-gray-600 hover:text-green-600 text-sm font-medium transition-colors">
+                            <Download className="h-4 w-4 mr-1" />
+                            증명서 발급
+                          </button>
+                        )}
+                      </div>
                       
-                      {career.verificationDate && (
-                        <div className="text-xs text-gray-500 mt-3">
-                          검증일: {career.verificationDate}
-                        </div>
-                      )}
+                      <div className="flex items-center space-x-2">
+                        <button className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm font-medium transition-colors">
+                          수정
+                        </button>
+                        {career.status === 'verified' && (
+                          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center">
+                            증명서 발급
+                            <ExternalLink className="h-4 w-4 ml-1" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <div className="flex items-center space-x-4">
-                    <button className="flex items-center text-gray-600 hover:text-blue-600 text-sm font-medium transition-colors">
-                      <Eye className="h-4 w-4 mr-1" />
-                      상세보기
-                    </button>
-                    {career.status === 'verified' && (
-                      <button className="flex items-center text-gray-600 hover:text-green-600 text-sm font-medium transition-colors">
-                        <Download className="h-4 w-4 mr-1" />
-                        증명서 발급
-                      </button>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <button className="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm font-medium transition-colors">
-                      수정
-                    </button>
-                    {career.status === 'verified' && (
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center">
-                        증명서 발급
-                        <ExternalLink className="h-4 w-4 ml-1" />
-                      </button>
-                    )}
-                  </div>
-                </div>
+                ))}
               </div>
-            </div>
-          ))}
+            ) : (
+              <div className="text-center py-12">
+                <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {activeTab === 'all' ? '등록된 경력이 없습니다' : `등록된 ${tabs.find(t => t.id === activeTab)?.name}이 없습니다`}
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  {searchQuery ? '다른 검색어를 시도해보세요.' : '새로운 경력을 등록해보세요.'}
+                </p>
+                <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                  새 경력 등록하기
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
-        {filteredCareers.length === 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-            <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">검색 결과가 없습니다</h3>
-            <p className="text-gray-600 mb-6">
-              다른 검색어나 필터 조건을 시도해보세요.
-            </p>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-              새 경력 등록하기
+        {/* Quick Actions */}
+        <div className="bg-white rounded-2xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">빠른 작업</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-colors group">
+              <div className="text-center">
+                <CheckCircle className="h-8 w-8 text-gray-400 group-hover:text-blue-600 mx-auto mb-2" />
+                <div className="font-medium text-gray-700 group-hover:text-blue-600">종합 경력증명서 발급</div>
+                <div className="text-sm text-gray-500">모든 검증된 경력 포함</div>
+              </div>
+            </button>
+            
+            <button className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-400 hover:bg-green-50 transition-colors group">
+              <div className="text-center">
+                <FileText className="h-8 w-8 text-gray-400 group-hover:text-green-600 mx-auto mb-2" />
+                <div className="font-medium text-gray-700 group-hover:text-green-600">선택 경력증명서 발급</div>
+                <div className="text-sm text-gray-500">원하는 경력만 선택</div>
+              </div>
+            </button>
+            
+            <button className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-colors group">
+              <div className="text-center">
+                <Download className="h-8 w-8 text-gray-400 group-hover:text-purple-600 mx-auto mb-2" />
+                <div className="font-medium text-gray-700 group-hover:text-purple-600">경력 데이터 내보내기</div>
+                <div className="text-sm text-gray-500">PDF, Excel 형식</div>
+              </div>
             </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
