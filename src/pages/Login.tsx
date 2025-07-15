@@ -1,19 +1,99 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Eye, EyeOff, Award, Shield, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Eye, EyeOff, Award, Shield, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { signIn, signInWithGoogle, signInWithKakao, user, loading } = useAuth();
+  
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     rememberMe: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Handle URL error parameters
+    const urlError = searchParams.get('error');
+    if (urlError) {
+      switch (urlError) {
+        case 'auth_callback_failed':
+          setError('소셜 로그인에 실패했습니다. 다시 시도해주세요.');
+          break;
+        case 'unexpected_error':
+          setError('예상치 못한 오류가 발생했습니다.');
+          break;
+        default:
+          setError('로그인 중 오류가 발생했습니다.');
+      }
+    }
+
+    // Redirect if already logged in
+    if (user && !loading) {
+      navigate('/career-search');
+    }
+  }, [user, loading, navigate, searchParams]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempt:', formData);
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const { error } = await signIn(formData.email, formData.password);
+      
+      if (error) {
+        switch (error.message) {
+          case 'Invalid login credentials':
+            setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+            break;
+          case 'Email not confirmed':
+            setError('이메일 인증이 필요합니다. 이메일을 확인해주세요.');
+            break;
+          default:
+            setError(error.message || '로그인에 실패했습니다.');
+        }
+      } else {
+        navigate('/career-search');
+      }
+    } catch (err) {
+      setError('로그인 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setError('');
+    localStorage.setItem('auth_redirect_to', '/career-search');
+    
+    try {
+      const { error } = await signInWithGoogle();
+      if (error) {
+        setError('구글 로그인에 실패했습니다.');
+      }
+    } catch (err) {
+      setError('구글 로그인 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleKakaoLogin = async () => {
+    setError('');
+    localStorage.setItem('auth_redirect_to', '/career-search');
+    
+    try {
+      const { error } = await signInWithKakao();
+      if (error) {
+        setError('카카오 로그인에 실패했습니다.');
+      }
+    } catch (err) {
+      setError('카카오 로그인 중 오류가 발생했습니다.');
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,7 +102,19 @@ const Login = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    setError(''); // Clear error when user types
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -42,6 +134,13 @@ const Login = () => {
 
         {/* Login Form */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
+              <AlertCircle className="h-5 w-5 text-red-500 mr-3 mt-0.5" />
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+          )}
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -106,17 +205,25 @@ const Login = () => {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="text-blue-600 hover:text-blue-500 font-medium">
+                <Link to="/auth/reset-password" className="text-blue-600 hover:text-blue-500 font-medium">
                   비밀번호 찾기
-                </a>
+                </Link>
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
+              disabled={isLoading}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
             >
-              로그인
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  로그인 중...
+                </>
+              ) : (
+                '로그인'
+              )}
             </button>
           </form>
 
@@ -134,12 +241,20 @@ const Login = () => {
 
           {/* Social Login */}
           <div className="mt-6 space-y-3">
-            <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <button 
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
               <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" className="w-5 h-5 mr-3" />
               구글로 로그인
             </button>
             
-            <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <button 
+              type="button"
+              onClick={handleKakaoLogin}
+              className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
               <div className="w-5 h-5 bg-yellow-400 rounded mr-3 flex items-center justify-center">
                 <span className="text-xs font-bold">K</span>
               </div>

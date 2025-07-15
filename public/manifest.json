@@ -1,0 +1,19 @@
+{
+  "name": "K-Xpert - 글로벌 비즈니스 전문가 플랫폼",
+  "short_name": "K-Xpert",
+  "description": "글로벌 비즈니스 전문가를 위한 경력 검증 및 인증 플랫폼",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["business", "productivity", "education"],
+  "lang": "ko-KR"
+}

@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Eye, EyeOff, Award, CheckCircle, User, Building } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Award, CheckCircle, User, Building, AlertCircle, Loader2 } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 const Register = () => {
+  const navigate = useNavigate();
+  const { signUp, user, loading } = useAuth();
+  
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [accountType, setAccountType] = useState('individual');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,10 +26,96 @@ const Register = () => {
     agreeMarketing: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Redirect if already logged in
+    if (user && !loading) {
+      navigate('/career-search');
+    }
+  }, [user, loading, navigate]);
+
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      setError('이름을 입력해주세요.');
+      return false;
+    }
+    if (!formData.email.trim()) {
+      setError('이메일을 입력해주세요.');
+      return false;
+    }
+    if (formData.password.length < 6) {
+      setError('비밀번호는 최소 6자 이상이어야 합니다.');
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError('비밀번호가 일치하지 않습니다.');
+      return false;
+    }
+    if (!formData.phone.trim()) {
+      setError('전화번호를 입력해주세요.');
+      return false;
+    }
+    if (accountType === 'enterprise') {
+      if (!formData.company.trim()) {
+        setError('회사명을 입력해주세요.');
+        return false;
+      }
+      if (!formData.position.trim()) {
+        setError('직책을 입력해주세요.');
+        return false;
+      }
+    }
+    if (!formData.agreeTerms) {
+      setError('이용약관에 동의해주세요.');
+      return false;
+    }
+    if (!formData.agreePrivacy) {
+      setError('개인정보처리방침에 동의해주세요.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration logic here
-    console.log('Registration attempt:', { accountType, ...formData });
+    
+    if (!validateForm()) return;
+    
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const userData = {
+        name: formData.name,
+        phone: formData.phone,
+        accountType,
+        company: accountType === 'enterprise' ? formData.company : '',
+        position: accountType === 'enterprise' ? formData.position : '',
+      };
+
+      const { error } = await signUp(formData.email, formData.password, userData);
+      
+      if (error) {
+        switch (error.message) {
+          case 'User already registered':
+            setError('이미 등록된 이메일입니다.');
+            break;
+          case 'Password should be at least 6 characters':
+            setError('비밀번호는 최소 6자 이상이어야 합니다.');
+            break;
+          default:
+            setError(error.message || '회원가입에 실패했습니다.');
+        }
+      } else {
+        setSuccess('회원가입이 완료되었습니다! 이메일을 확인하여 계정을 인증해주세요.');
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
+      }
+    } catch (err) {
+      setError('회원가입 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +124,19 @@ const Register = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    setError(''); // Clear error when user types
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -101,6 +206,20 @@ const Register = () => {
 
         {/* Registration Form */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
+              <AlertCircle className="h-5 w-5 text-red-500 mr-3 mt-0.5" />
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start">
+              <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5" />
+              <p className="text-green-700 text-sm">{success}</p>
+            </div>
+          )}
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -303,9 +422,17 @@ const Register = () => {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
+              disabled={isLoading}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
             >
-              회원가입
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  가입 중...
+                </>
+              ) : (
+                '회원가입'
+              )}
             </button>
           </form>
 

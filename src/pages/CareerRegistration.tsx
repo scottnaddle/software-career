@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { Plus, Save, FileText, Calendar, MapPin, Users, Code, Award, Trash2, CreditCard, Clock, Shield, Building, GraduationCap, Briefcase } from 'lucide-react';
+import PaymentModal from '../components/PaymentModal';
+import FileUpload from '../components/FileUpload';
+import { PaymentRequest } from '../hooks/usePayment';
+import { useAuth } from '../hooks/useAuth';
+import { UploadedFile } from '../hooks/useFileUpload';
 
 const CareerRegistration = () => {
+  const { user, profile } = useAuth();
   const [activeTab, setActiveTab] = useState('work-experience');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentType, setPaymentType] = useState('');
+  const [paymentData, setPaymentData] = useState<PaymentRequest | null>(null);
 
   // 근무경력 상태
   const [workExperiences, setWorkExperiences] = useState([
@@ -19,7 +26,8 @@ const CareerRegistration = () => {
       jobType: 'full-time',
       responsibilities: '',
       achievements: [],
-      technologies: []
+      technologies: [],
+      attachments: [] as UploadedFile[]
     }
   ]);
 
@@ -34,7 +42,8 @@ const CareerRegistration = () => {
       endDate: '',
       isGraduated: true,
       gpa: '',
-      activities: ''
+      activities: '',
+      attachments: [] as UploadedFile[]
     }
   ]);
 
@@ -48,7 +57,8 @@ const CareerRegistration = () => {
       role: '',
       description: '',
       technologies: [],
-      achievements: []
+      achievements: [],
+      attachments: [] as UploadedFile[]
     }
   ]);
 
@@ -61,7 +71,8 @@ const CareerRegistration = () => {
       issueDate: '',
       expiryDate: '',
       certificateNumber: '',
-      description: ''
+      description: '',
+      attachments: [] as UploadedFile[]
     }
   ]);
 
@@ -77,7 +88,8 @@ const CareerRegistration = () => {
       jobType: 'full-time',
       responsibilities: '',
       achievements: [],
-      technologies: []
+      technologies: [],
+      attachments: [] as UploadedFile[]
     };
     setWorkExperiences([...workExperiences, newExperience]);
   };
@@ -102,7 +114,8 @@ const CareerRegistration = () => {
       endDate: '',
       isGraduated: true,
       gpa: '',
-      activities: ''
+      activities: '',
+      attachments: [] as UploadedFile[]
     };
     setEducations([...educations, newEducation]);
   };
@@ -126,7 +139,8 @@ const CareerRegistration = () => {
       role: '',
       description: '',
       technologies: [],
-      achievements: []
+      achievements: [],
+      attachments: [] as UploadedFile[]
     };
     setProjects([...projects, newProject]);
   };
@@ -149,7 +163,8 @@ const CareerRegistration = () => {
       issueDate: '',
       expiryDate: '',
       certificateNumber: '',
-      description: ''
+      description: '',
+      attachments: [] as UploadedFile[]
     };
     setCertificates([...certificates, newCertificate]);
   };
@@ -164,10 +179,104 @@ const CareerRegistration = () => {
     ));
   };
 
-  const handleVerificationRequest = (type: 'standard' | 'express') => {
-    setPaymentType(type);
+  // 검증 요청 및 결제 처리
+  const handleVerificationRequest = (speed: 'standard' | 'express') => {
+    if (!user || !profile) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    const amount = speed === 'express' ? 35000 : 15000;
+    const orderName = speed === 'express' ? 'K-Xpert 신속 경력 검증' : 'K-Xpert 일반 경력 검증';
+
+    const payment: PaymentRequest = {
+      amount,
+      orderName,
+      customerEmail: user.email!,
+      customerName: profile.name,
+      customerPhone: profile.phone,
+      serviceType: 'verification',
+      verificationSpeed: speed,
+    };
+
+    setPaymentData(payment);
+    setPaymentType(speed);
     setShowPaymentModal(true);
   };
+
+  // 결제 성공 처리
+  const handlePaymentSuccess = (result: any) => {
+    setShowPaymentModal(false);
+    alert('결제가 완료되었습니다! 전문가 검토가 시작됩니다.');
+    // TODO: 실제로는 경력 데이터를 서버에 저장하고 검증 요청 생성
+  };
+
+  // 결제 실패 처리
+  const handlePaymentError = (error: string) => {
+    setShowPaymentModal(false);
+    alert(`결제에 실패했습니다: ${error}`);
+  };
+
+  // 파일 업로드 핸들러
+  const handleFilesUploaded = (
+    files: UploadedFile[], 
+    careerType: 'work' | 'education' | 'project' | 'certificate', 
+    careerId: number
+  ) => {
+    switch (careerType) {
+      case 'work':
+        setWorkExperiences(prev => prev.map(exp => 
+          exp.id === careerId ? { ...exp, attachments: [...exp.attachments, ...files] } : exp
+        ));
+        break;
+      case 'education':
+        setEducations(prev => prev.map(edu => 
+          edu.id === careerId ? { ...edu, attachments: [...edu.attachments, ...files] } : edu
+        ));
+        break;
+      case 'project':
+        setProjects(prev => prev.map(proj => 
+          proj.id === careerId ? { ...proj, attachments: [...proj.attachments, ...files] } : proj
+        ));
+        break;
+      case 'certificate':
+        setCertificates(prev => prev.map(cert => 
+          cert.id === careerId ? { ...cert, attachments: [...cert.attachments, ...files] } : cert
+        ));
+        break;
+    }
+  };
+
+  // 파일 삭제 핸들러
+  const handleFileDeleted = (
+    fileId: string, 
+    careerType: 'work' | 'education' | 'project' | 'certificate', 
+    careerId: number
+  ) => {
+    switch (careerType) {
+      case 'work':
+        setWorkExperiences(prev => prev.map(exp => 
+          exp.id === careerId ? { ...exp, attachments: exp.attachments.filter(f => f.id !== fileId) } : exp
+        ));
+        break;
+      case 'education':
+        setEducations(prev => prev.map(edu => 
+          edu.id === careerId ? { ...edu, attachments: edu.attachments.filter(f => f.id !== fileId) } : edu
+        ));
+        break;
+      case 'project':
+        setProjects(prev => prev.map(proj => 
+          proj.id === careerId ? { ...proj, attachments: proj.attachments.filter(f => f.id !== fileId) } : proj
+        ));
+        break;
+      case 'certificate':
+        setCertificates(prev => prev.map(cert => 
+          cert.id === careerId ? { ...cert, attachments: cert.attachments.filter(f => f.id !== fileId) } : cert
+        ));
+        break;
+    }
+  };
+
 
   const tabs = [
     { id: 'work-experience', name: '근무경력', icon: Briefcase },
@@ -613,6 +722,19 @@ const CareerRegistration = () => {
                               placeholder="업무를 통해 달성한 성과, 개선된 지표, 수상 경력 등을 작성하세요"
                             />
                           </div>
+
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              증빙 자료 첨부
+                            </label>
+                            <FileUpload
+                              careerType="work"
+                              careerId={experience.id.toString()}
+                              onFilesUploaded={(files) => handleFilesUploaded(files, 'work', experience.id)}
+                              onFileDeleted={(fileId) => handleFileDeleted(fileId, 'work', experience.id)}
+                              maxFiles={3}
+                            />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -758,6 +880,19 @@ const CareerRegistration = () => {
                               onChange={(e) => updateEducation(education.id, 'activities', e.target.value)}
                             />
                           </div>
+
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              증빙 자료 첨부
+                            </label>
+                            <FileUpload
+                              careerType="education"
+                              careerId={education.id.toString()}
+                              onFilesUploaded={(files) => handleFilesUploaded(files, 'education', education.id)}
+                              onFileDeleted={(fileId) => handleFileDeleted(fileId, 'education', education.id)}
+                              maxFiles={3}
+                            />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -886,15 +1021,13 @@ const CareerRegistration = () => {
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               증빙 자료 첨부
                             </label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-                              <FileText className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                              <p className="text-sm text-gray-600 mb-2">
-                                프로젝트 관련 문서, 스크린샷, 링크 등을 첨부하세요
-                              </p>
-                              <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                                파일 선택
-                              </button>
-                            </div>
+                            <FileUpload
+                              careerType="project"
+                              careerId={project.id.toString()}
+                              onFilesUploaded={(files) => handleFilesUploaded(files, 'project', project.id)}
+                              onFileDeleted={(fileId) => handleFileDeleted(fileId, 'project', project.id)}
+                              maxFiles={3}
+                            />
                           </div>
                         </div>
                       </div>
@@ -1003,15 +1136,14 @@ const CareerRegistration = () => {
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               자격증 사본 첨부
                             </label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-                              <Award className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                              <p className="text-sm text-gray-600 mb-2">
-                                자격증 사본을 첨부하세요 (PDF, JPG, PNG)
-                              </p>
-                              <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                                파일 선택
-                              </button>
-                            </div>
+                            <FileUpload
+                              careerType="certificate"
+                              careerId={certificate.id.toString()}
+                              onFilesUploaded={(files) => handleFilesUploaded(files, 'certificate', certificate.id)}
+                              onFileDeleted={(fileId) => handleFileDeleted(fileId, 'certificate', certificate.id)}
+                              maxFiles={2}
+                              allowedTypes={['pdf', 'jpg', 'jpeg', 'png']}
+                            />
                           </div>
                         </div>
                       </div>
@@ -1055,7 +1187,15 @@ const CareerRegistration = () => {
       </div>
 
       {/* Payment Modal */}
-      {showPaymentModal && <PaymentModal />}
+      {showPaymentModal && paymentData && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          paymentData={paymentData}
+          onSuccess={handlePaymentSuccess}
+          onError={handlePaymentError}
+        />
+      )}
     </div>
   );
 };
