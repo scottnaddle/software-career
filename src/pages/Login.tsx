@@ -6,7 +6,7 @@ import { useAuth } from '../hooks/useAuth';
 const Login = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { signIn, signInWithGoogle, signInWithKakao, user, loading } = useAuth();
+  const { signIn, signUp, signInWithGoogle, signInWithKakao, user, loading } = useAuth();
   
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,16 +74,65 @@ const Login = () => {
     setError('');
     
     const credentials = {
-      general: { email: 'test@example.com', password: 'password123' },
-      admin: { email: 'admin@k-xpert.co.kr', password: 'AdminK-Xpert2024!' }
+      general: { 
+        email: 'test@example.com', 
+        password: 'password123',
+        userData: {
+          name: '테스트 사용자',
+          phone: '010-1234-5678',
+          accountType: 'individual',
+          company: null,
+          position: null
+        }
+      },
+      admin: { 
+        email: 'admin@k-xpert.co.kr', 
+        password: 'AdminK-Xpert2024!',
+        userData: {
+          name: 'K-Xpert 관리자',
+          phone: '02-1234-5678',
+          accountType: 'admin',
+          company: 'K-Xpert',
+          position: '시스템 관리자'
+        }
+      }
     };
 
+    const cred = credentials[userType];
+
     try {
-      const { error } = await signIn(credentials[userType].email, credentials[userType].password);
+      // 먼저 로그인 시도
+      const { error: loginError } = await signIn(cred.email, cred.password);
       
-      if (error) {
-        console.error(`${userType} login error:`, error);
-        setError(`${userType === 'admin' ? '관리자' : '일반 사용자'} 로그인에 실패했습니다: ${error.message}`);
+      if (loginError) {
+        console.log(`${userType} login failed, trying to create account:`, loginError.message);
+        
+        // 로그인 실패 시 계정 생성 시도
+        if (loginError.message.includes('Invalid login credentials')) {
+          console.log(`Creating new ${userType} account...`);
+          
+          const { error: signupError } = await signUp(cred.email, cred.password, cred.userData);
+          
+          if (signupError) {
+            console.error(`${userType} signup error:`, signupError);
+            setError(`${userType === 'admin' ? '관리자' : '일반 사용자'} 계정 생성에 실패했습니다: ${signupError.message}`);
+          } else {
+            console.log(`${userType} account created successfully, attempting login...`);
+            
+            // 계정 생성 후 로그인 시도
+            setTimeout(async () => {
+              const { error: retryLoginError } = await signIn(cred.email, cred.password);
+              if (retryLoginError) {
+                console.error(`${userType} retry login error:`, retryLoginError);
+                setError(`계정이 생성되었지만 로그인에 실패했습니다. 잠시 후 다시 시도해주세요.`);
+              }
+            }, 2000);
+          }
+        } else {
+          setError(`${userType === 'admin' ? '관리자' : '일반 사용자'} 로그인에 실패했습니다: ${loginError.message}`);
+        }
+      } else {
+        console.log(`${userType} login successful`);
       }
     } catch (err) {
       console.error('Login catch error:', err);
@@ -206,6 +255,9 @@ const Login = () => {
               <p className="text-xs text-gray-500">
                 테스트 계정: test@example.com
               </p>
+              <p className="text-xs text-gray-400 mt-1">
+                계정이 없으면 자동으로 생성됩니다
+              </p>
             </div>
           </div>
 
@@ -255,6 +307,9 @@ const Login = () => {
             <div className="mt-3 text-center">
               <p className="text-xs text-gray-500">
                 테스트 계정: admin@k-xpert.co.kr
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                계정이 없으면 자동으로 생성됩니다
               </p>
             </div>
           </div>
