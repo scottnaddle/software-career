@@ -28,15 +28,15 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center text-gray-600">
                 <Mail className="h-5 w-5 mr-3 text-gray-400" />
-                <span>info@k-xpert.co.kr</span>
+                <span>caind@caind.kr</span>
               </div>
               <div className="flex items-center text-gray-600">
                 <Phone className="h-5 w-5 mr-3 text-gray-400" />
-                <span>02-1234-5678</span>
+                <span>02-539-7113</span>
               </div>
               <div className="flex items-center text-gray-600">
                 <MapPin className="h-5 w-5 mr-3 text-gray-400" />
-                <span>서울특별시 강남구 테헤란로 123</span>
+                <span>서울시 서초구 강남대로 69길 8 KI 타워 10층 1007호</span>
               </div>
             </div>
           </div>
@@ -142,14 +142,13 @@ const Footer = () => {
             <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm" style={{ color: '#67768e' }}>
               <p>&copy; 2024 K-Xpert. All rights reserved.</p>
               <div className="flex space-x-4">
-                <span>사업자등록번호: 123-45-67890</span>
-                <span>통신판매업신고: 제2024-서울강남-1234호</span>
+                <span>고유번호: 211-82-75543</span>
               </div>
             </div>
             
             <div className="flex items-center space-x-2 mt-4 md:mt-0">
               <span className="text-sm text-gray-500">Powered by</span>
-              <span className="text-sm font-semibold text-gray-700">K-Xpert Team</span>
+              <span className="text-sm font-semibold text-gray-700">CAIND(국제개발컨설팅협회)</span>
             </div>
           </div>
         </div>
