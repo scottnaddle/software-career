@@ -464,60 +464,61 @@ const CareerSearch = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                <Shield className="h-6 w-6 text-green-600" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center mr-3 sm:mr-4">
+                <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{verifiedCareers}</div>
-                <div className="text-sm text-gray-600">검증완료</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{verifiedCareers}</div>
+                <div className="text-xs sm:text-sm text-gray-600">검증완료</div>
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
-                <Calendar className="h-6 w-6 text-yellow-600" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-3 sm:mr-4">
+                <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{pendingCareers}</div>
-                <div className="text-sm text-gray-600">검증대기</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{pendingCareers}</div>
+                <div className="text-xs sm:text-sm text-gray-600">검증대기</div>
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm col-span-2 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
-                <Download className="h-6 w-6 text-purple-600" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-3 sm:mr-4">
+                <Download className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{availableForCertificate}</div>
-                <div className="text-sm text-gray-600">발급가능</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{availableForCertificate}</div>
+                <div className="text-xs sm:text-sm text-gray-600">발급가능</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-2xl shadow-sm mb-8">
+        <div className="bg-white rounded-2xl shadow-sm mb-6 sm:mb-8">
           <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6" aria-label="Tabs">
+            <nav className="flex space-x-2 sm:space-x-4 lg:space-x-8 px-4 sm:px-6 overflow-x-auto" aria-label="Tabs">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center transition-colors ${
+                  className={`py-3 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm flex items-center transition-colors whitespace-nowrap ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
-                  <tab.icon className="h-5 w-5 mr-2" />
-                  {tab.name}
-                  <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${
+                  <tab.icon className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">{tab.name}</span>
+                  <span className="sm:hidden">{tab.name.substring(0, 2)}</span>
+                  <span className={`ml-1 sm:ml-2 py-0.5 px-1.5 sm:px-2 rounded-full text-xs ${
                     activeTab === tab.id
                       ? 'bg-blue-100 text-blue-600'
                       : 'bg-gray-100 text-gray-600'
@@ -530,59 +531,61 @@ const CareerSearch = () => {
           </div>
 
           {/* Tab Content */}
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {filteredCareers.length > 0 ? (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {filteredCareers.map((career) => (
-                  <div key={career.id} className="bg-gray-50 rounded-2xl p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-start space-x-4">
-                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${getTypeColor(career.type).replace('text-', 'bg-').replace('-700', '-100')}`}>
+                  <div key={career.id} className="bg-gray-50 rounded-2xl p-4 sm:p-6 hover:shadow-md transition-shadow">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 space-y-4 sm:space-y-0">
+                      <div className="flex items-start space-x-3 sm:space-x-4 flex-1">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${getTypeColor(career.type).replace('text-', 'bg-').replace('-700', '-100')}`}>
                           {getTypeIcon(career.type)}
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-2">
-                            <h3 className="text-lg font-semibold text-gray-900">{career.title}</h3>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-2">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">{career.title}</h3>
                             {getStatusBadge(career.status)}
                           </div>
-                          <div className="flex items-center text-gray-600 text-sm space-x-4 mb-2">
+                          <div className="flex flex-col sm:flex-row sm:items-center text-gray-600 text-sm space-y-1 sm:space-y-0 sm:space-x-4 mb-2">
                             <div className="flex items-center">
-                              <MapPin className="h-4 w-4 mr-1" />
-                              {career.company}
+                              <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
+                              <span className="truncate">{career.company}</span>
                             </div>
                             <div className="flex items-center">
-                              <Calendar className="h-4 w-4 mr-1" />
-                              {career.period}
+                              <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
+                              <span className="truncate">{career.period}</span>
                             </div>
-                            <div className="font-medium text-blue-600">
+                            <div className="font-medium text-blue-600 truncate">
                               {career.role}
                             </div>
                           </div>
-                          <p className="text-gray-600 text-sm mb-3">{career.description}</p>
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{career.description}</p>
                           
                           {/* Career Type Specific Information */}
                           {renderCareerSpecificInfo(career)}
                           
                           {career.technologies.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-3 mt-3">
-                              <span className="text-sm font-medium text-gray-700 mr-2">기술 스택:</span>
-                              {career.technologies.map((tech, index) => (
-                                <span
-                                  key={index}
-                                  className="px-2 py-1 bg-blue-50 text-blue-600 rounded-md text-xs font-medium"
-                                >
-                                  {tech}
-                                </span>
-                              ))}
+                            <div className="mb-3 mt-3">
+                              <span className="text-sm font-medium text-gray-700 block sm:inline sm:mr-2 mb-1 sm:mb-0">기술 스택:</span>
+                              <div className="flex flex-wrap gap-2">
+                                {career.technologies.map((tech, index) => (
+                                  <span
+                                    key={index}
+                                    className="px-2 py-1 bg-blue-50 text-blue-600 rounded-md text-xs font-medium"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
                           )}
 
                           {career.achievements && career.achievements.length > 0 && (
                             <div className="mt-3">
                               <span className="text-sm font-medium text-gray-700 mr-2">주요 성과:</span>
-                              <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
+                              <ul className="list-disc list-inside text-sm text-gray-600 mt-1 space-y-1">
                                 {career.achievements.map((achievement, index) => (
-                                  <li key={index}>{achievement}</li>
+                                  <li key={index} className="break-words">{achievement}</li>
                                 ))}
                               </ul>
                             </div>
@@ -597,8 +600,8 @@ const CareerSearch = () => {
                       </div>
                     </div>
                     
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                      <div className="flex items-center space-x-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-gray-200 space-y-3 sm:space-y-0">
+                      <div className="flex items-center space-x-2 sm:space-x-4">
                         <button className="flex items-center text-gray-600 hover:text-blue-600 text-sm font-medium transition-colors">
                           <Eye className="h-4 w-4 mr-1" />
                           상세보기

@@ -101,44 +101,68 @@ const Login = () => {
     const cred = credentials[userType];
 
     try {
+      console.log(`=== ${userType} 로그인 시도 시작 ===`);
+      console.log('Email:', cred.email);
+      console.log('Password length:', cred.password.length);
+      
       // 먼저 로그인 시도
       const { error: loginError } = await signIn(cred.email, cred.password);
       
       if (loginError) {
-        console.log(`${userType} login failed, trying to create account:`, loginError.message);
+        console.log(`${userType} 로그인 실패:`, loginError.message);
+        console.log('로그인 실패 이유:', loginError);
         
         // 로그인 실패 시 계정 생성 시도
         if (loginError.message.includes('Invalid login credentials')) {
-          console.log(`Creating new ${userType} account...`);
+          console.log(`=== ${userType} 계정 자동 생성 시작 ===`);
           
-          const { error: signupError } = await signUp(cred.email, cred.password, cred.userData);
+          const { error: signupError, data: signupData } = await signUp(cred.email, cred.password, cred.userData);
           
           if (signupError) {
-            console.error(`${userType} signup error:`, signupError);
-            setError(`${userType === 'admin' ? '관리자' : '일반 사용자'} 계정 생성에 실패했습니다: ${signupError.message}`);
+            console.error(`${userType} 계정 생성 실패:`, signupError);
+            
+            // 이미 존재하는 사용자인 경우 다른 처리
+            if (signupError.message.includes('already registered')) {
+              console.log('사용자가 이미 존재함 - 비밀번호 문제일 수 있음');
+              setError(`계정이 존재하지만 비밀번호가 올바르지 않습니다. 수동으로 계정을 확인해주세요.`);
+            } else {
+              setError(`${userType === 'admin' ? '관리자' : '일반 사용자'} 계정 생성에 실패했습니다: ${signupError.message}`);
+            }
           } else {
-            console.log(`${userType} account created successfully, attempting login...`);
+            console.log(`${userType} 계정 생성 성공:`, signupData);
+            setError(`${userType === 'admin' ? '관리자' : '일반 사용자'} 계정이 생성되었습니다. 잠시 후 자동으로 로그인됩니다.`);
             
             // 계정 생성 후 로그인 시도
             setTimeout(async () => {
+              console.log(`=== ${userType} 재로그인 시도 ===`);
               const { error: retryLoginError } = await signIn(cred.email, cred.password);
               if (retryLoginError) {
-                console.error(`${userType} retry login error:`, retryLoginError);
-                setError(`계정이 생성되었지만 로그인에 실패했습니다. 잠시 후 다시 시도해주세요.`);
+                console.error(`${userType} 재로그인 실패:`, retryLoginError);
+                setError(`계정이 생성되었지만 로그인에 실패했습니다. 수동으로 Supabase에서 계정을 확인해주세요.`);
+              } else {
+                console.log(`${userType} 재로그인 성공!`);
+                setError(''); // 성공하면 에러 메시지 제거
               }
-            }, 2000);
+            }, 3000);
           }
         } else {
           setError(`${userType === 'admin' ? '관리자' : '일반 사용자'} 로그인에 실패했습니다: ${loginError.message}`);
         }
       } else {
-        console.log(`${userType} login successful`);
+        console.log(`${userType} 로그인 성공!`);
+        setError(''); // 성공하면 에러 메시지 제거
       }
     } catch (err) {
       console.error('Login catch error:', err);
       setError('로그인 중 오류가 발생했습니다.');
     } finally {
-      setIsLoading(false);
+      // 비동기 작업이 있으므로 loading을 즉시 끄지 않음
+      if (!error.includes('생성되었습니다')) {
+        setIsLoading(false);
+      } else {
+        // 계정 생성 후 재로그인 대기 중일 때는 3초 후에 loading 해제
+        setTimeout(() => setIsLoading(false), 3000);
+      }
     }
   };
 

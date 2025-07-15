@@ -1,39 +1,43 @@
 import React from 'react';
-import { Award, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, FileText, Shield, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Award, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, FileText, Shield, Users, Globe } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+    <footer className="bg-gray-50 border-t border-gray-200">
+      {/* Main Footer */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
-                <Award className="h-7 w-7 text-white" />
+              <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center mr-3">
+                <Award className="h-6 w-6 text-white" />
               </div>
               <div>
-                <span className="text-2xl font-bold text-white">K-Xpert</span>
-                <div className="text-xs text-gray-400">글로벌 비즈니스 전문가 플랫폼</div>
+                <span className="text-xl font-bold text-gray-900">K-Xpert</span>
+                <div className="text-sm text-gray-600">글로벌 비즈니스 전문가 플랫폼</div>
               </div>
             </div>
-            <p className="text-gray-400 leading-relaxed mb-6">
-              세계 최초 정부 공인 글로벌 비즈니스 전문가 경력관리 플랫폼으로, 
-              블록체인 기술을 활용한 신뢰할 수 있는 경력 검증 서비스를 제공합니다.
+            
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              K-Xpert는 글로벌 비즈니스 전문가들을 위한 경력 검증 및 증명서 발급 플랫폼입니다. 
+              정부 공인 경력관리 시스템을 통해 신뢰할 수 있는 전문가 네트워크를 구축하고 있습니다.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
-                <Linkedin className="h-5 w-5" />
-              </a>
+            
+            <div className="space-y-3">
+              <div className="flex items-center text-gray-600">
+                <Mail className="h-5 w-5 mr-3 text-gray-400" />
+                <span>info@k-xpert.co.kr</span>
+              </div>
+              <div className="flex items-center text-gray-600">
+                <Phone className="h-5 w-5 mr-3 text-gray-400" />
+                <span>02-1234-5678</span>
+              </div>
+              <div className="flex items-center text-gray-600">
+                <MapPin className="h-5 w-5 mr-3 text-gray-400" />
+                <span>서울특별시 강남구 테헤란로 123</span>
+              </div>
             </div>
           </div>
 
@@ -95,74 +99,59 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-6 flex items-center">
-              <Users className="h-5 w-5 mr-2" />
-              연락처
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <Phone className="h-5 w-5 mr-3 text-blue-400" />
-                <span>02-2023-9999</span>
-              </div>
-              <div className="flex items-center">
-                <Mail className="h-5 w-5 mr-3 text-blue-400" />
-                <span>support@k-xpert.com</span>
-              </div>
-              <div className="flex items-start">
-                <MapPin className="h-5 w-5 mr-3 text-blue-400 mt-1" />
-                <span>서울특별시 강남구 테헤란로 311<br />아남타워빌딩 7층</span>
-              </div>
+        </div>
+
+        {/* Social Media */}
+        <div className="mt-12 pt-8 border-t border-gray-200">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex space-x-6 mb-4 md:mb-0">
+              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                <Facebook className="h-6 w-6" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                <Twitter className="h-6 w-6" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                <Linkedin className="h-6 w-6" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                <Instagram className="h-6 w-6" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                <Globe className="h-6 w-6" />
+              </a>
             </div>
             
-            {/* Newsletter */}
-            <div className="mt-8">
-              <h4 className="font-semibold text-white mb-4">뉴스레터</h4>
-              <p className="text-gray-400 text-sm mb-4">
-                최신 소식과 유용한 정보를 받아보세요.
-              </p>
-              <div className="flex">
-                <input
-                  type="email"
-                  placeholder="이메일 주소"
-                  className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-l-lg focus:outline-none focus:border-blue-500 text-white text-sm"
-                />
-                <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-r-lg transition-colors text-sm">
-                  구독
-                </button>
-              </div>
+            <div className="flex flex-wrap justify-center md:justify-end space-x-6 text-sm">
+              <Link to="/privacy" className="text-gray-600 hover:text-blue-600 transition-colors">
+                개인정보처리방침
+              </Link>
+              <Link to="/terms" className="text-gray-600 hover:text-blue-600 transition-colors">
+                이용약관
+              </Link>
+              <Link to="/security" className="text-gray-600 hover:text-blue-600 transition-colors">
+                보안정책
+              </Link>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom */}
-        <div className="border-t border-gray-800 mt-12 pt-8">
-          <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
-            <div className="text-gray-400 text-sm">
-              © 2024 K-Xpert. All rights reserved.
+      {/* Bottom Footer */}
+      <div className="bg-gray-100 border-t border-gray-200" style={{ backgroundColor: '#eeeeee' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm" style={{ color: '#67768e' }}>
+              <p>&copy; 2024 K-Xpert. All rights reserved.</p>
+              <div className="flex space-x-4">
+                <span>사업자등록번호: 123-45-67890</span>
+                <span>통신판매업신고: 제2024-서울강남-1234호</span>
+              </div>
             </div>
-            <div className="flex flex-wrap items-center justify-center lg:justify-end space-x-6 text-sm text-gray-400">
-              <a href="#" className="hover:text-blue-400 transition-colors">이용약관</a>
-              <a href="#" className="hover:text-blue-400 transition-colors">개인정보처리방침</a>
-              <span>사업자등록번호: 123-45-67890</span>
-              <span>통신판매업신고: 2024-서울강남-0123</span>
-            </div>
-          </div>
-          
-          {/* Certifications */}
-          <div className="mt-8 pt-8 border-t border-gray-800">
-            <div className="flex flex-wrap justify-center items-center space-x-8 text-xs text-gray-500">
-              <div className="flex items-center">
-                <Award className="h-4 w-4 mr-2 text-blue-400" />
-                정부 공인
-              </div>
-              <div className="flex items-center">
-                <Shield className="h-4 w-4 mr-2 text-green-400" />
-                ISO 27001 인증
-              </div>
-              <div className="flex items-center">
-                <FileText className="h-4 w-4 mr-2 text-purple-400" />
-                블록체인 기술 적용
-              </div>
+            
+            <div className="flex items-center space-x-2 mt-4 md:mt-0">
+              <span className="text-sm text-gray-500">Powered by</span>
+              <span className="text-sm font-semibold text-gray-700">K-Xpert Team</span>
             </div>
           </div>
         </div>
