@@ -81,14 +81,14 @@ const AdminDashboard: React.FC = () => {
         paymentsResult,
         reviewsResult
       ] = await Promise.all([
-        supabase.from('users').select('count').single(),
+        supabase.from('users').select('*', { count: 'exact', head: true }),
         supabase.from('expert_profiles').select('status'),
         supabase.from('payments').select('amount, status, created_at'),
         supabase.from('review_requests').select('status')
       ]);
 
       // Calculate stats
-      const totalUsers = usersResult.data?.count || 0;
+      const totalUsers = usersResult.count || 0;
       const experts = expertsResult.data || [];
       const payments = paymentsResult.data || [];
       const reviews = reviewsResult.data || [];
@@ -125,7 +125,7 @@ const AdminDashboard: React.FC = () => {
       });
 
       // Fetch expert applications
-      const { data: applications } = await supabase
+      const { data: applications, error: applicationsError } = await supabase
         .from('expert_profiles')
         .select(`
           *,
@@ -134,10 +134,13 @@ const AdminDashboard: React.FC = () => {
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
+      if (applicationsError) {
+        console.warn('Error fetching expert applications:', applicationsError);
+      }
       setExpertApplications(applications || []);
 
       // Fetch recent payments
-      const { data: recentPaymentsData } = await supabase
+      const { data: recentPaymentsData, error: paymentsError } = await supabase
         .from('payments')
         .select(`
           *,
@@ -146,6 +149,9 @@ const AdminDashboard: React.FC = () => {
         .order('created_at', { ascending: false })
         .limit(10);
 
+      if (paymentsError) {
+        console.warn('Error fetching recent payments:', paymentsError);
+      }
       setRecentPayments(recentPaymentsData || []);
 
     } catch (error) {
