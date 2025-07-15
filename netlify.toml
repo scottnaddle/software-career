@@ -22,15 +22,15 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-# SPA redirect rules
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-# API proxy for Supabase (optional)
+# API proxy for Supabase (optional) - must come before SPA redirect
 [[redirects]]
   from = "/api/*"
   to = "https://your-project-ref.supabase.co/:splat"
   status = 200
   force = false
+
+# SPA redirect rules - must be last to catch all unmatched routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
