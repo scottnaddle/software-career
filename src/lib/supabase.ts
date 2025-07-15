@@ -21,7 +21,7 @@ export interface User {
   email: string;
   name: string;
   phone?: string;
-  account_type: 'individual' | 'enterprise';
+  account_type: 'individual' | 'enterprise' | 'admin';
   company?: string;
   position?: string;
   created_at: string;
