@@ -85,20 +85,73 @@ export function useAuth() {
 
   const fetchProfile = async (userId: string) => {
     try {
+      console.log('Fetching profile for user:', userId);
+      
       const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('id', userId)
         .single();
 
-      if (error && error.code !== 'PGRST116') { // Not found error is acceptable for new users
-        console.error('Profile fetch error:', error);
-        // Continue without profile for now
+      if (error) {
+        console.log('Profile fetch error:', error);
+        
+        if (error.code === 'PGRST116') { // Not found error
+          console.log('Profile not found, attempting to create from auth metadata');
+          
+          // Try to get user metadata from auth
+          const { data: authUser } = await supabase.auth.getUser();
+          
+          if (authUser.user && authUser.user.id === userId) {
+            const metadata = authUser.user.user_metadata;
+            const email = authUser.user.email;
+            
+            console.log('Auth user metadata:', metadata);
+            
+            // Create profile from auth metadata
+            const profileData = {
+              id: userId,
+              email: email || '',
+              name: metadata.name || email?.split('@')[0] || 'User',
+              phone: metadata.phone || null,
+              account_type: metadata.account_type || 'individual',
+              company: metadata.company || null,
+              position: metadata.position || null,
+              verified: false,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            };
+
+            console.log('Creating missing profile:', profileData);
+
+            const { data: newProfile, error: createError } = await supabase
+              .from('users')
+              .insert([profileData])
+              .select()
+              .single();
+
+            if (createError) {
+              console.error('Error creating missing profile:', createError);
+              setProfile(null);
+            } else {
+              console.log('Missing profile created successfully:', newProfile);
+              setProfile(newProfile);
+            }
+          } else {
+            setProfile(null);
+          }
+        } else {
+          console.error('Other profile fetch error:', error);
+          setProfile(null);
+        }
+      } else {
+        console.log('Profile found:', data);
+        setProfile(data);
       }
-      setProfile(data || null);
+      
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Error in fetchProfile:', error);
       setProfile(null);
       setLoading(false);
     }
@@ -124,6 +177,8 @@ export function useAuth() {
 
   const signUp = async (email: string, password: string, userData: any) => {
     try {
+      console.log('Starting signup process for:', email);
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -138,29 +193,50 @@ export function useAuth() {
         }
       });
 
-      if (data.user && !error) {
+      console.log('Auth signup result:', { data, error });
+
+      if (error) {
+        console.error('Auth signup error:', error);
+        return { data, error };
+      }
+
+      if (data.user) {
+        console.log('User created in auth.users:', data.user.id);
+        
         // Create user profile in users table
-        const { error: profileError } = await supabase
+        const profileData = {
+          id: data.user.id,
+          email,
+          name: userData.name,
+          phone: userData.phone || null,
+          account_type: userData.accountType,
+          company: userData.company || null,
+          position: userData.position || null,
+          verified: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
+        console.log('Creating profile with data:', profileData);
+
+        const { data: profileResult, error: profileError } = await supabase
           .from('users')
-          .insert([
-            {
-              id: data.user.id,
-              email,
-              name: userData.name,
-              phone: userData.phone,
-              account_type: userData.accountType,
-              company: userData.company,
-              position: userData.position,
-            },
-          ]);
+          .insert([profileData])
+          .select()
+          .single();
 
         if (profileError) {
           console.error('Error creating profile:', profileError);
+          // Don't fail the signup if profile creation fails
+          // The user can still login and we can create the profile later
+        } else {
+          console.log('Profile created successfully:', profileResult);
         }
       }
 
       return { data, error };
     } catch (error) {
+      console.error('Signup catch error:', error);
       return { error: error as AuthError };
     }
   };
