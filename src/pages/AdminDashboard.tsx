@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
-import { Users, UserCheck, CreditCard, BarChart3, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Users, UserCheck, CreditCard, BarChart3, Clock, CheckCircle, XCircle, AlertCircle, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface DashboardStats {
   totalUsers: number;
@@ -44,6 +44,17 @@ interface Payment {
   };
 }
 
+interface AllUser {
+  id: string;
+  email: string;
+  name: string;
+  account_type: string;
+  company?: string;
+  position?: string;
+  created_at: string;
+  verified: boolean;
+}
+
 const AdminDashboard: React.FC = () => {
   const { user, profile } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
@@ -58,8 +69,15 @@ const AdminDashboard: React.FC = () => {
   });
   const [expertApplications, setExpertApplications] = useState<ExpertApplication[]>([]);
   const [recentPayments, setRecentPayments] = useState<Payment[]>([]);
+  const [allUsers, setAllUsers] = useState<AllUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'experts' | 'payments' | 'users'>('overview');
+  
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Check if user is admin
   const isAdmin = profile?.account_type === 'admin';
@@ -154,6 +172,17 @@ const AdminDashboard: React.FC = () => {
       }
       setRecentPayments(recentPaymentsData || []);
 
+      // Fetch all users for user management
+      const { data: usersData, error: usersError } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (usersError) {
+        console.warn('Error fetching users:', usersError);
+      }
+      setAllUsers(usersData || []);
+
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
@@ -175,6 +204,46 @@ const AdminDashboard: React.FC = () => {
     } catch (error) {
       console.error('Error updating expert application:', error);
     }
+  };
+
+  // Filter and search functions
+  const filteredUsers = allUsers.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (user.company && user.company.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesFilter = filterStatus === 'all' || user.account_type === filterStatus;
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
+  const filteredPayments = recentPayments.filter(payment => {
+    const matchesSearch = payment.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         payment.user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesFilter = filterStatus === 'all' || payment.status === filterStatus;
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  const paginatedPayments = filteredPayments.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Reset filters when changing tabs
+  const handleTabChange = (tab: 'overview' | 'experts' | 'payments' | 'users') => {
+    setActiveTab(tab);
+    setSearchTerm('');
+    setFilterStatus('all');
+    setCurrentPage(1);
   };
 
   if (!user || !isAdmin) {
@@ -223,7 +292,7 @@ const AdminDashboard: React.FC = () => {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() => handleTabChange(tab.id as any)}
                     className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
                       activeTab === tab.id
                         ? 'border-blue-500 text-blue-600'
@@ -428,6 +497,33 @@ const AdminDashboard: React.FC = () => {
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">결제 현황 모니터링</h3>
               <p className="text-gray-600 mt-1">시스템 내 모든 결제 내역을 확인할 수 있습니다.</p>
+              
+              {/* Search and Filter */}
+              <div className="mt-4 flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type="text"
+                    placeholder="사용자명, 이메일로 검색..."
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Filter className="text-gray-400 h-5 w-5" />
+                  <select
+                    className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                  >
+                    <option value="all">모든 상태</option>
+                    <option value="completed">완료</option>
+                    <option value="pending">대기중</option>
+                    <option value="failed">실패</option>
+                  </select>
+                </div>
+              </div>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -451,7 +547,7 @@ const AdminDashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {recentPayments.map(payment => (
+                  {paginatedPayments.map(payment => (
                     <tr key={payment.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
@@ -492,13 +588,178 @@ const AdminDashboard: React.FC = () => {
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">사용자 관리</h3>
               <p className="text-gray-600 mt-1">시스템 사용자 정보를 관리할 수 있습니다.</p>
-            </div>
-            <div className="p-6">
-              <div className="text-center py-8">
-                <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">사용자 관리 기능은 개발 중입니다.</p>
+              
+              {/* Search and Filter */}
+              <div className="mt-4 flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type="text"
+                    placeholder="이름, 이메일, 회사명으로 검색..."
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Filter className="text-gray-400 h-5 w-5" />
+                  <select
+                    className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                  >
+                    <option value="all">모든 계정</option>
+                    <option value="individual">개인</option>
+                    <option value="enterprise">기업</option>
+                    <option value="admin">관리자</option>
+                  </select>
+                </div>
               </div>
             </div>
+            
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      사용자
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      계정 유형
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      회사/직책
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      인증 상태
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      가입일
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {paginatedUsers.map(user => (
+                    <tr key={user.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                          <div className="text-sm text-gray-500">{user.email}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          user.account_type === 'admin' ? 'bg-red-100 text-red-800' :
+                          user.account_type === 'enterprise' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {user.account_type === 'admin' ? '관리자' :
+                           user.account_type === 'enterprise' ? '기업' : '개인'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {user.company && (
+                            <>
+                              <div>{user.company}</div>
+                              {user.position && <div className="text-gray-500">{user.position}</div>}
+                            </>
+                          )}
+                          {!user.company && <span className="text-gray-400">-</span>}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          user.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {user.verified ? '인증됨' : '미인증'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(user.created_at).toLocaleDateString('ko-KR')}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              
+              {filteredUsers.length === 0 && (
+                <div className="text-center py-8">
+                  <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">검색 조건에 맞는 사용자가 없습니다.</p>
+                </div>
+              )}
+            </div>
+            
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="px-6 py-3 flex items-center justify-between border-t border-gray-200">
+                <div className="flex-1 flex justify-between sm:hidden">
+                  <button
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
+                  >
+                    이전
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
+                  >
+                    다음
+                  </button>
+                </div>
+                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm text-gray-700">
+                      <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span>
+                      {' - '}
+                      <span className="font-medium">{Math.min(currentPage * itemsPerPage, filteredUsers.length)}</span>
+                      {' / '}
+                      <span className="font-medium">{filteredUsers.length}</span>
+                      {' 결과'}
+                    </p>
+                  </div>
+                  <div>
+                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                      <button
+                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      
+                      {[...Array(totalPages)].map((_, index) => {
+                        const page = index + 1;
+                        return (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                              currentPage === page
+                                ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                                : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        );
+                      })}
+                      
+                      <button
+                        onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                        disabled={currentPage === totalPages}
+                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
