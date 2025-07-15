@@ -97,8 +97,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact */}
-          <div>
         </div>
 
         {/* Social Media */}
