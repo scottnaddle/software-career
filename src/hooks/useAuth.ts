@@ -302,14 +302,31 @@ export function useAuth() {
 
   const signOut = async () => {
     try {
+      console.log('Starting signOut process...');
+      
+      // Force clear local state first
+      setUser(null);
+      setProfile(null);
+      setSession(null);
+      setLoading(false);
+      
+      // Then call Supabase signOut
       const { error } = await supabase.auth.signOut();
-      if (!error) {
-        setUser(null);
-        setProfile(null);
-        setSession(null);
+      
+      if (error) {
+        console.error('Supabase signOut error:', error);
+        // Don't return error - still clear local state
       }
-      return { error };
+      
+      console.log('SignOut completed successfully');
+      return { error: null };
     } catch (error) {
+      console.error('SignOut catch error:', error);
+      // Even if there's an error, clear local state
+      setUser(null);
+      setProfile(null);
+      setSession(null);
+      setLoading(false);
       return { error: error as AuthError };
     }
   };

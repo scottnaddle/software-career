@@ -74,7 +74,7 @@ const Login = () => {
     setError('');
     
     const credentials = {
-      general: { email: 'kim.minsoo@gmail.com', password: 'password123' },
+      general: { email: 'test@example.com', password: 'password123' },
       admin: { email: 'admin@k-xpert.co.kr', password: 'AdminK-Xpert2024!' }
     };
 
@@ -82,9 +82,11 @@ const Login = () => {
       const { error } = await signIn(credentials[userType].email, credentials[userType].password);
       
       if (error) {
-        setError(`${userType === 'admin' ? '관리자' : '일반 사용자'} 로그인에 실패했습니다.`);
+        console.error(`${userType} login error:`, error);
+        setError(`${userType === 'admin' ? '관리자' : '일반 사용자'} 로그인에 실패했습니다: ${error.message}`);
       }
     } catch (err) {
+      console.error('Login catch error:', err);
       setError('로그인 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
@@ -202,7 +204,7 @@ const Login = () => {
             </button>
             <div className="mt-3 text-center">
               <p className="text-xs text-gray-500">
-                테스트 계정: kim.minsoo@gmail.com
+                테스트 계정: test@example.com
               </p>
             </div>
           </div>

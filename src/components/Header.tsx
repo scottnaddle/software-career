@@ -16,9 +16,27 @@ const Header = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    setIsUserMenuOpen(false);
-    navigate('/');
+    try {
+      console.log('Signing out...');
+      await signOut();
+      setIsUserMenuOpen(false);
+      
+      // Clear any stored redirect paths
+      localStorage.removeItem('auth_redirect_to');
+      
+      // Navigate to home page
+      navigate('/');
+      
+      // Force page refresh to clear any remaining state
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force logout even if there's an error
+      localStorage.removeItem('auth_redirect_to');
+      window.location.href = '/';
+    }
   };
 
   return (
