@@ -4,49 +4,8 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables:', {
-    url: !!supabaseUrl,
-    key: !!supabaseAnonKey,
-    allEnvVars: import.meta.env
-  });
-  
-  // For Netlify deployment debugging
-  if (typeof window !== 'undefined') {
-    const errorMessage = `
-      환경변수 설정이 필요합니다!
-      
-      Netlify Dashboard에서 다음 환경변수를 설정해주세요:
-      - VITE_SUPABASE_URL: Supabase 프로젝트 URL
-      - VITE_SUPABASE_ANON_KEY: Supabase Anon Key
-      
-      설정 위치: Site settings → Environment variables
-      
-      현재 상태:
-      - URL: ${!!supabaseUrl ? '✅ 설정됨' : '❌ 누락'}
-      - Key: ${!!supabaseAnonKey ? '✅ 설정됨' : '❌ 누락'}
-    `;
-    
-    // Show user-friendly error in browser
-    document.body.innerHTML = `
-      <div style="padding: 40px; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #dc2626;">환경변수 설정 필요</h1>
-        <pre style="background: #f3f4f6; padding: 20px; border-radius: 8px; white-space: pre-wrap;">${errorMessage}</pre>
-        <p style="margin-top: 20px;">
-          <a href="https://app.netlify.com" target="_blank" style="background: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-            Netlify Dashboard 열기
-          </a>
-        </p>
-      </div>
-    `;
-  }
-  
-  throw new Error('Missing Supabase environment variables');
+  throw new Error('Missing required environment variables: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
 }
-
-console.log('Supabase connection initializing...', {
-  url: supabaseUrl,
-  keyLength: supabaseAnonKey.length
-});
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
