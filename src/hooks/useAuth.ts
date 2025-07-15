@@ -70,9 +70,36 @@ export function useAuth() {
         }
         setLoading(false);
 
-        // Handle email confirmation
+        // Handle email confirmation and redirect
         if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
           console.log('User email confirmed');
+          
+          // Auto-redirect based on user type after successful login
+          setTimeout(() => {
+            if (typeof window !== 'undefined') {
+              // Check if user profile exists and redirect accordingly
+              const checkProfileAndRedirect = async () => {
+                try {
+                  const { data: profile } = await supabase
+                    .from('users')
+                    .select('account_type')
+                    .eq('id', session.user.id)
+                    .single();
+                  
+                  if (profile?.account_type === 'admin') {
+                    window.location.href = '/admin-dashboard';
+                  } else {
+                    window.location.href = '/career-search';
+                  }
+                } catch (error) {
+                  console.error('Error checking profile for redirect:', error);
+                  window.location.href = '/career-search';
+                }
+              };
+              
+              checkProfileAndRedirect();
+            }
+          }, 100);
         }
       }
     );

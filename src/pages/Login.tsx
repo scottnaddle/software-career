@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Eye, EyeOff, Award, Shield, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Award, Shield, CheckCircle, AlertCircle, Loader2, User, Building } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
@@ -11,6 +11,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedUserType, setSelectedUserType] = useState<'general' | 'admin' | null>(null);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -35,7 +36,7 @@ const Login = () => {
 
     // Redirect if already logged in
     if (user && !loading) {
-      navigate('/career-search');
+      // Will be handled by the auth success handler
     }
   }, [user, loading, navigate, searchParams]);
 
@@ -59,7 +60,29 @@ const Login = () => {
             setError(error.message || '로그인에 실패했습니다.');
         }
       } else {
-        navigate('/career-search');
+        // Redirect will be handled by useAuth hook
+      }
+    } catch (err) {
+      setError('로그인 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleQuickLogin = async (userType: 'general' | 'admin') => {
+    setIsLoading(true);
+    setError('');
+    
+    const credentials = {
+      general: { email: 'kim.minsoo@gmail.com', password: 'password123' },
+      admin: { email: 'admin@k-xpert.co.kr', password: 'AdminK-Xpert2024!' }
+    };
+
+    try {
+      const { error } = await signIn(credentials[userType].email, credentials[userType].password);
+      
+      if (error) {
+        setError(`${userType === 'admin' ? '관리자' : '일반 사용자'} 로그인에 실패했습니다.`);
       }
     } catch (err) {
       setError('로그인 중 오류가 발생했습니다.');
@@ -118,7 +141,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+      <div className="max-w-4xl w-full space-y-8">
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center mb-6">
@@ -126,20 +149,131 @@ const Login = () => {
               <Award className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">로그인</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">K-Xpert 로그인</h2>
           <p className="text-gray-600">
-            K-Xpert에 오신 것을 환영합니다
+            전문 경력 검증 플랫폼에 오신 것을 환영합니다
           </p>
         </div>
 
-        {/* Login Form */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
-              <AlertCircle className="h-5 w-5 text-red-500 mr-3 mt-0.5" />
-              <p className="text-red-700 text-sm">{error}</p>
+        {/* User Type Selection */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* General User Login */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-gray-200 hover:border-blue-300 transition-colors">
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <User className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">일반 사용자</h3>
+              <p className="text-gray-600 text-sm">
+                경력 등록, 검증 요청, 증명서 발급 등<br />
+                개인 및 기업 사용자를 위한 서비스
+              </p>
             </div>
-          )}
+            <div className="space-y-3">
+              <div className="flex items-center text-sm text-gray-600">
+                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                <span>경력 등록 및 관리</span>
+              </div>
+              <div className="flex items-center text-sm text-gray-600">
+                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                <span>전문가 검증 요청</span>
+              </div>
+              <div className="flex items-center text-sm text-gray-600">
+                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                <span>공식 증명서 발급</span>
+              </div>
+            </div>
+            <button
+              onClick={() => handleQuickLogin('general')}
+              disabled={isLoading}
+              className="w-full mt-6 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  로그인 중...
+                </>
+              ) : (
+                <>
+                  <User className="h-4 w-4 mr-2" />
+                  일반 사용자 로그인
+                </>
+              )}
+            </button>
+            <div className="mt-3 text-center">
+              <p className="text-xs text-gray-500">
+                테스트 계정: kim.minsoo@gmail.com
+              </p>
+            </div>
+          </div>
+
+          {/* Admin User Login */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-red-200 hover:border-red-300 transition-colors">
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-6 w-6 text-red-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">관리자</h3>
+              <p className="text-gray-600 text-sm">
+                시스템 관리, 사용자 관리, 전문가 승인 등<br />
+                플랫폼 운영을 위한 관리자 전용 서비스
+              </p>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center text-sm text-gray-600">
+                <Shield className="h-4 w-4 text-red-500 mr-2" />
+                <span>사용자 및 전문가 관리</span>
+              </div>
+              <div className="flex items-center text-sm text-gray-600">
+                <Shield className="h-4 w-4 text-red-500 mr-2" />
+                <span>결제 및 매출 관리</span>
+              </div>
+              <div className="flex items-center text-sm text-gray-600">
+                <Shield className="h-4 w-4 text-red-500 mr-2" />
+                <span>시스템 모니터링</span>
+              </div>
+            </div>
+            <button
+              onClick={() => handleQuickLogin('admin')}
+              disabled={isLoading}
+              className="w-full mt-6 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  로그인 중...
+                </>
+              ) : (
+                <>
+                  <Shield className="h-4 w-4 mr-2" />
+                  관리자 로그인
+                </>
+              )}
+            </button>
+            <div className="mt-3 text-center">
+              <p className="text-xs text-gray-500">
+                테스트 계정: admin@k-xpert.co.kr
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
+            <AlertCircle className="h-5 w-5 text-red-500 mr-3 mt-0.5" />
+            <p className="text-red-700 text-sm">{error}</p>
+          </div>
+        )}
+
+        {/* Custom Login Form */}
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="text-center mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">직접 로그인</h3>
+            <p className="text-gray-600 text-sm">
+              이메일과 비밀번호를 입력하여 로그인하세요
+            </p>
+          </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
