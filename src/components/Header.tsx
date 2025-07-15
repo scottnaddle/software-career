@@ -86,16 +86,6 @@ const Header = () => {
               기업 서비스
             </Link>
             <Link 
-              to="/expert-dashboard" 
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/expert-dashboard') || isActive('/expert-application')
-                  ? 'text-blue-600 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-600'
-              }`}
-            >
-              전문가
-            </Link>
-            <Link 
               to="/guide" 
               className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive('/guide') 
