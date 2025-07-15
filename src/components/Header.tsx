@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User, FileText, Award, HelpCircle, LogOut, Settings } from 'lucide-react';
+import { Menu, X, User, FileText, Award, HelpCircle, LogOut, Settings, Shield } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import NotificationDropdown from './NotificationDropdown';
 
@@ -126,7 +126,11 @@ const Header = () => {
                       {profile?.name || user.email?.split('@')[0]}
                     </div>
                     <div className="text-xs text-gray-500">
-                      {profile?.account_type === 'enterprise' ? '기업' : '개인'}
+                      {profile?.account_type === 'admin' ? '관리자' : 
+                       profile?.account_type === 'enterprise' ? '기업' : '개인'}
+                      {profile?.account_type === 'admin' && (
+                        <span className="ml-1 inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+                      )}
                     </div>
                   </div>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,14 +167,19 @@ const Header = () => {
                       </Link>
                       
                       {profile?.account_type === 'admin' && (
-                        <Link
-                          to="/admin-dashboard"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          <Settings className="h-4 w-4 mr-3" />
-                          관리자 대시보드
-                        </Link>
+                        <>
+                          <div className="border-t border-gray-100 my-1"></div>
+                          <Link
+                            to="/admin-dashboard"
+                            className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-l-2 border-red-500 bg-red-25"
+                            onClick={() => setIsUserMenuOpen(false)}
+                          >
+                            <Shield className="h-4 w-4 mr-3" />
+                            관리자 대시보드
+                            <span className="ml-auto text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">ADMIN</span>
+                          </Link>
+                          <div className="border-t border-gray-100 my-1"></div>
+                        </>
                       )}
                       
                       <button
@@ -289,6 +298,19 @@ const Header = () => {
                         </div>
                       </div>
                     </div>
+                    
+                    {profile?.account_type === 'admin' && (
+                      <Link
+                        to="/admin-dashboard"
+                        className="flex items-center w-full text-left text-red-600 hover:text-red-700 px-3 py-2 rounded-md text-base font-medium border border-red-200 bg-red-50 mb-2"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Shield className="h-4 w-4 mr-2" />
+                        관리자 대시보드
+                        <span className="ml-auto text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">ADMIN</span>
+                      </Link>
+                    )}
+                    
                     <button
                       onClick={() => {
                         handleSignOut();
