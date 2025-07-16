@@ -141,10 +141,10 @@ export function useAuth() {
               email: email || '',
               name: metadata.name || email?.split('@')[0] || 'User',
               phone: metadata.phone || null,
-              account_type: metadata.account_type || 'individual',
+              account_type: (email === 'admin@k-xpert.co.kr' || email === 'admin@x-pert.co.kr') ? 'admin' : (metadata.account_type || 'individual'),
               company: metadata.company || null,
               position: metadata.position || null,
-              verified: false,
+              verified: (email === 'admin@k-xpert.co.kr' || email === 'admin@x-pert.co.kr') ? true : false,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             };

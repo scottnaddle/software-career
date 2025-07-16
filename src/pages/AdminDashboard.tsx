@@ -17,14 +17,14 @@ interface DashboardStats {
 interface ExpertApplication {
   id: string;
   user_id: string;
-  specialization: string;
-  experience_years: number;
-  certifications: string[];
+  specialties: string[];
+  rate: number;
+  bio: string;
   portfolio_url: string;
-  motivation: string;
-  status: 'pending' | 'approved' | 'rejected';
+  linkedin_url: string;
+  status: 'pending' | 'verified' | 'rejected';
   created_at: string;
-  user: {
+  users: {
     name: string;
     email: string;
     company: string;
@@ -100,7 +100,7 @@ const AdminDashboard: React.FC = () => {
         reviewsResult
       ] = await Promise.all([
         supabase.from('users').select('*', { count: 'exact', head: true }),
-        supabase.from('expert_profiles').select('status'),
+        supabase.from('expert_verifications').select('status'),
         supabase.from('payments').select('amount, status, created_at'),
         supabase.from('review_requests').select('status')
       ]);
@@ -112,7 +112,7 @@ const AdminDashboard: React.FC = () => {
       const reviews = reviewsResult.data || [];
 
       const pendingExperts = experts.filter(e => e.status === 'pending').length;
-      const approvedExperts = experts.filter(e => e.status === 'approved').length;
+      const approvedExperts = experts.filter(e => e.status === 'verified').length;
       const rejectedExperts = experts.filter(e => e.status === 'rejected').length;
 
       const completedPayments = payments.filter(p => p.status === 'completed');
@@ -144,7 +144,7 @@ const AdminDashboard: React.FC = () => {
 
       // Fetch expert applications
       const { data: applications, error: applicationsError } = await supabase
-        .from('expert_profiles')
+        .from('expert_verifications')
         .select(`
           *,
           users!inner(name, email, company, position)
@@ -192,12 +192,41 @@ const AdminDashboard: React.FC = () => {
 
   const handleExpertApplication = async (applicationId: string, action: 'approve' | 'reject') => {
     try {
+      const newStatus = action === 'approve' ? 'verified' : 'rejected';
+      
+      // Update expert verification
       const { error } = await supabase
-        .from('expert_profiles')
-        .update({ status: action === 'approve' ? 'approved' : 'rejected' })
+        .from('expert_verifications')
+        .update({ 
+          status: newStatus,
+          reviewed_at: new Date().toISOString(),
+          reviewed_by: user?.id
+        })
         .eq('id', applicationId);
 
       if (error) throw error;
+
+      // If approved, update user's expert status
+      if (action === 'approve') {
+        const { data: verification } = await supabase
+          .from('expert_verifications')
+          .select('user_id, specialties, rate, bio')
+          .eq('id', applicationId)
+          .single();
+
+        if (verification) {
+          await supabase
+            .from('users')
+            .update({
+              is_expert: true,
+              expert_specialties: verification.specialties,
+              expert_rate: verification.rate,
+              expert_bio: verification.bio,
+              expert_verification_status: 'verified'
+            })
+            .eq('id', verification.user_id);
+        }
+      }
 
       // Refresh data
       await fetchDashboardData();
@@ -244,6 +273,84 @@ const AdminDashboard: React.FC = () => {
     setSearchTerm('');
     setFilterStatus('all');
     setCurrentPage(1);
+  };
+
+  // User management functions
+  const handleUserVerificationToggle = async (userId: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          verified: !currentStatus,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      // Refresh data
+      await fetchDashboardData();
+    } catch (error) {
+      console.error('Error updating user verification:', error);
+    }
+  };
+
+  const handleUserAccountTypeChange = async (userId: string, newAccountType: string) => {
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          account_type: newAccountType,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      // Refresh data
+      await fetchDashboardData();
+    } catch (error) {
+      console.error('Error updating user account type:', error);
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm('이 사용자를 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      // Refresh data
+      await fetchDashboardData();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
+  const handlePaymentStatusChange = async (paymentId: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('payments')
+        .update({ 
+          status: newStatus,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', paymentId);
+
+      if (error) throw error;
+
+      // Refresh data
+      await fetchDashboardData();
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+    }
   };
 
   if (!user || !isAdmin) {
@@ -432,27 +539,33 @@ const AdminDashboard: React.FC = () => {
                         <div className="flex-1">
                           <div className="flex items-center space-x-4 mb-4">
                             <div>
-                              <h4 className="text-lg font-semibold text-gray-900">{application.user.name}</h4>
-                              <p className="text-gray-600">{application.user.email}</p>
+                              <h4 className="text-lg font-semibold text-gray-900">{application.users.name}</h4>
+                              <p className="text-gray-600">{application.users.email}</p>
                             </div>
                             <div>
-                              <p className="text-sm text-gray-500">회사: {application.user.company}</p>
-                              <p className="text-sm text-gray-500">직책: {application.user.position}</p>
+                              <p className="text-sm text-gray-500">회사: {application.users.company}</p>
+                              <p className="text-sm text-gray-500">직책: {application.users.position}</p>
                             </div>
                           </div>
                           <div className="grid grid-cols-2 gap-4 mb-4">
                             <div>
                               <p className="text-sm font-medium text-gray-700">전문 분야</p>
-                              <p className="text-gray-600">{application.specialization}</p>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {application.specialties.map((specialty, index) => (
+                                  <span key={index} className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">
+                                    {specialty}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-gray-700">경력</p>
-                              <p className="text-gray-600">{application.experience_years}년</p>
+                              <p className="text-sm font-medium text-gray-700">시간당 요율</p>
+                              <p className="text-gray-600">{application.rate.toLocaleString()}원</p>
                             </div>
                           </div>
                           <div className="mb-4">
-                            <p className="text-sm font-medium text-gray-700">지원 동기</p>
-                            <p className="text-gray-600 text-sm">{application.motivation}</p>
+                            <p className="text-sm font-medium text-gray-700">전문가 소개</p>
+                            <p className="text-gray-600 text-sm">{application.bio}</p>
                           </div>
                           {application.portfolio_url && (
                             <div className="mb-4">
@@ -544,6 +657,9 @@ const AdminDashboard: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       날짜
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      관리
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -562,17 +678,34 @@ const AdminDashboard: React.FC = () => {
                         <div className="text-sm text-gray-900">{payment.payment_method}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          payment.status === 'completed' ? 'bg-green-100 text-green-800' :
-                          payment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {payment.status === 'completed' ? '완료' :
-                           payment.status === 'pending' ? '대기' : '실패'}
-                        </span>
+                        <select
+                          value={payment.status}
+                          onChange={(e) => handlePaymentStatusChange(payment.id, e.target.value)}
+                          className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="pending">대기</option>
+                          <option value="completed">완료</option>
+                          <option value="failed">실패</option>
+                          <option value="canceled">취소</option>
+                        </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(payment.created_at).toLocaleDateString('ko-KR')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => {
+                              if (confirm('이 결제를 환불 처리하시겠습니까?')) {
+                                handlePaymentStatusChange(payment.id, 'canceled');
+                              }
+                            }}
+                            className="text-orange-600 hover:text-orange-800 transition-colors"
+                            title="환불 처리"
+                          >
+                            <AlertCircle className="h-4 w-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -636,6 +769,9 @@ const AdminDashboard: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       가입일
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      관리
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -648,14 +784,15 @@ const AdminDashboard: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.account_type === 'admin' ? 'bg-red-100 text-red-800' :
-                          user.account_type === 'enterprise' ? 'bg-blue-100 text-blue-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {user.account_type === 'admin' ? '관리자' :
-                           user.account_type === 'enterprise' ? '기업' : '개인'}
-                        </span>
+                        <select
+                          value={user.account_type}
+                          onChange={(e) => handleUserAccountTypeChange(user.id, e.target.value)}
+                          className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="individual">개인</option>
+                          <option value="enterprise">기업</option>
+                          <option value="admin">관리자</option>
+                        </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
@@ -669,14 +806,28 @@ const AdminDashboard: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                        }`}>
+                        <button
+                          onClick={() => handleUserVerificationToggle(user.id, user.verified)}
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full cursor-pointer hover:opacity-80 transition-opacity ${
+                            user.verified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                          }`}
+                        >
                           {user.verified ? '인증됨' : '미인증'}
-                        </span>
+                        </button>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(user.created_at).toLocaleDateString('ko-KR')}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleDeleteUser(user.id)}
+                            className="text-red-600 hover:text-red-800 transition-colors"
+                            title="사용자 삭제"
+                          >
+                            <XCircle className="h-4 w-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
