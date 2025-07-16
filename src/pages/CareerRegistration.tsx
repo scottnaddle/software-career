@@ -1,22 +1,26 @@
-import React, { useState } from 'react';
-import { Plus, Save, FileText, Calendar, MapPin, Users, Code, Award, Trash2, CreditCard, Clock, Shield, Building, GraduationCap, Briefcase } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Save, FileText, Calendar, MapPin, Users, Code, Award, Trash2, CreditCard, Clock, Shield, Building, GraduationCap, Briefcase, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import PaymentModal from '../components/PaymentModal';
 import FileUpload from '../components/FileUpload';
 import { PaymentRequest } from '../hooks/usePayment';
 import { useAuth } from '../hooks/useAuth';
+import { useCareers } from '../hooks/useCareers';
 import { UploadedFile } from '../hooks/useFileUpload';
 
 const CareerRegistration = () => {
   const { user, profile } = useAuth();
+  const { careers, loading, error, createCareer, updateCareer, deleteCareer, fetchCareers } = useCareers(user?.id);
   const [activeTab, setActiveTab] = useState('work-experience');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentType, setPaymentType] = useState('');
   const [paymentData, setPaymentData] = useState<PaymentRequest | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   // 근무경력 상태
   const [workExperiences, setWorkExperiences] = useState([
     {
-      id: 1,
+      id: Date.now(),
       company: '',
       department: '',
       position: '',
@@ -34,7 +38,7 @@ const CareerRegistration = () => {
   // 학력 상태
   const [educations, setEducations] = useState([
     {
-      id: 1,
+      id: Date.now(),
       schoolName: '',
       major: '',
       degree: 'bachelor',
@@ -50,7 +54,7 @@ const CareerRegistration = () => {
   // 프로젝트 상태
   const [projects, setProjects] = useState([
     {
-      id: 1,
+      id: Date.now(),
       title: '',
       company: '',
       period: { start: '', end: '' },
@@ -65,7 +69,7 @@ const CareerRegistration = () => {
   // 자격증 상태
   const [certificates, setCertificates] = useState([
     {
-      id: 1,
+      id: Date.now(),
       name: '',
       issuer: '',
       issueDate: '',
@@ -277,6 +281,192 @@ const CareerRegistration = () => {
     }
   };
 
+  // 기존 데이터 로드
+  useEffect(() => {
+    if (user?.id && careers.length > 0) {
+      loadExistingData();
+    }
+  }, [careers]);
+
+  const loadExistingData = () => {
+    const workExp = careers.filter(c => c.type === 'experience');
+    const educationData = careers.filter(c => c.type === 'education');
+    const projectData = careers.filter(c => c.type === 'project');
+    const certificateData = careers.filter(c => c.type === 'certificate');
+
+    if (workExp.length > 0) {
+      setWorkExperiences(workExp.map(exp => ({
+        id: exp.id,
+        company: exp.company,
+        department: exp.department || '',
+        position: exp.role,
+        startDate: exp.start_date,
+        endDate: exp.end_date || '',
+        isCurrent: !exp.end_date,
+        jobType: 'full-time',
+        responsibilities: exp.description,
+        achievements: exp.achievements || [],
+        technologies: exp.technologies || [],
+        attachments: [] as UploadedFile[]
+      })));
+    }
+
+    if (educationData.length > 0) {
+      setEducations(educationData.map(edu => ({
+        id: edu.id,
+        schoolName: edu.company,
+        major: edu.title,
+        degree: 'bachelor',
+        startDate: edu.start_date,
+        endDate: edu.end_date || '',
+        isGraduated: !!edu.end_date,
+        gpa: '',
+        activities: edu.description,
+        attachments: [] as UploadedFile[]
+      })));
+    }
+
+    if (projectData.length > 0) {
+      setProjects(projectData.map(proj => ({
+        id: proj.id,
+        title: proj.title,
+        company: proj.company,
+        period: { start: proj.start_date, end: proj.end_date || '' },
+        role: proj.role,
+        description: proj.description,
+        technologies: proj.technologies || [],
+        achievements: proj.achievements || [],
+        attachments: [] as UploadedFile[]
+      })));
+    }
+
+    if (certificateData.length > 0) {
+      setCertificates(certificateData.map(cert => ({
+        id: cert.id,
+        name: cert.title,
+        issuer: cert.company,
+        issueDate: cert.start_date,
+        expiryDate: cert.end_date || '',
+        certificateNumber: '',
+        description: cert.description,
+        attachments: [] as UploadedFile[]
+      })));
+    }
+  };
+
+  // 임시 저장 기능
+  const handleSaveDraft = async () => {
+    if (!user?.id) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    setSaving(true);
+    setSaveMessage(null);
+
+    try {
+      const careersToSave = [];
+
+      // 근무경력 저장
+      for (const exp of workExperiences) {
+        if (exp.company && exp.position) {
+          careersToSave.push({
+            user_id: user.id,
+            title: exp.position,
+            company: exp.company,
+            department: exp.department,
+            role: exp.position,
+            description: exp.responsibilities,
+            start_date: exp.startDate,
+            end_date: exp.isCurrent ? null : exp.endDate,
+            type: 'experience',
+            technologies: exp.technologies,
+            achievements: exp.achievements,
+            status: 'draft'
+          });
+        }
+      }
+
+      // 학력 저장
+      for (const edu of educations) {
+        if (edu.schoolName && edu.major) {
+          careersToSave.push({
+            user_id: user.id,
+            title: edu.major,
+            company: edu.schoolName,
+            role: edu.degree,
+            description: edu.activities,
+            start_date: edu.startDate,
+            end_date: edu.isGraduated ? edu.endDate : null,
+            type: 'education',
+            technologies: [],
+            achievements: [],
+            status: 'draft'
+          });
+        }
+      }
+
+      // 프로젝트 저장
+      for (const proj of projects) {
+        if (proj.title && proj.company) {
+          careersToSave.push({
+            user_id: user.id,
+            title: proj.title,
+            company: proj.company,
+            role: proj.role,
+            description: proj.description,
+            start_date: proj.period.start,
+            end_date: proj.period.end,
+            type: 'project',
+            technologies: proj.technologies,
+            achievements: proj.achievements,
+            status: 'draft'
+          });
+        }
+      }
+
+      // 자격증 저장
+      for (const cert of certificates) {
+        if (cert.name && cert.issuer) {
+          careersToSave.push({
+            user_id: user.id,
+            title: cert.name,
+            company: cert.issuer,
+            role: 'Certificate',
+            description: cert.description,
+            start_date: cert.issueDate,
+            end_date: cert.expiryDate,
+            type: 'certificate',
+            technologies: [],
+            achievements: [],
+            status: 'draft'
+          });
+        }
+      }
+
+      // 데이터베이스에 저장
+      let savedCount = 0;
+      for (const career of careersToSave) {
+        const { error } = await createCareer(career);
+        if (!error) {
+          savedCount++;
+        }
+      }
+
+      setSaveMessage({ 
+        type: 'success', 
+        text: `${savedCount}개의 경력이 임시 저장되었습니다.` 
+      });
+    } catch (error) {
+      setSaveMessage({ 
+        type: 'error', 
+        text: '임시 저장 중 오류가 발생했습니다.' 
+      });
+    } finally {
+      setSaving(false);
+      setTimeout(() => setSaveMessage(null), 5000);
+    }
+  };
 
   const tabs = [
     { id: 'work-experience', name: '근무경력', icon: Briefcase },
@@ -1154,9 +1344,37 @@ const CareerRegistration = () => {
 
               {/* Action Buttons */}
               <div className="p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+                {/* 저장 메시지 */}
+                {saveMessage && (
+                  <div className={`mb-4 p-3 rounded-lg flex items-center ${
+                    saveMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {saveMessage.type === 'success' ? (
+                      <CheckCircle className="h-5 w-5 mr-2" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5 mr-2" />
+                    )}
+                    {saveMessage.text}
+                  </div>
+                )}
+                
                 <div className="flex justify-between">
-                  <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors">
-                    임시저장
+                  <button 
+                    onClick={handleSaveDraft}
+                    disabled={saving}
+                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors flex items-center disabled:opacity-50"
+                  >
+                    {saving ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        저장 중...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4 mr-2" />
+                        임시저장
+                      </>
+                    )}
                   </button>
                   <div className="space-x-4">
                     <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors">

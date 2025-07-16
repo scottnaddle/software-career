@@ -28,18 +28,28 @@ export const usePayment = () => {
     
     try {
       // 주문 ID 생성
-      const orderId = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const orderId = `TOSS_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
+      // 현재 사용자 정보 가져오기
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        throw new Error('로그인이 필요합니다.');
+      }
+
       // Supabase에 결제 요청 기록
       const { data: payment, error: paymentError } = await supabase
         .from('payments')
         .insert([
           {
+            user_id: user.id,
+            order_id: orderId,
             type: paymentData.serviceType,
             service_type: paymentData.verificationSpeed || 'standard',
             amount: paymentData.amount,
             status: 'pending',
             payment_method: 'toss',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
           }
         ])
         .select()
@@ -54,12 +64,49 @@ export const usePayment = () => {
         import.meta.env.VITE_TOSS_CLIENT_KEY
       );
 
-      const widgetPayment = tossPayments.widgets({
-        customerKey: payment.user_id,
+      // 결제 위젯 초기화
+      const widgets = tossPayments.widgets({
+        customerKey: user.id,
       });
 
+      // 결제 UI 렌더링을 위한 컨테이너 생성
+      let paymentContainer = document.getElementById('payment-widget-container');
+      if (!paymentContainer) {
+        paymentContainer = document.createElement('div');
+        paymentContainer.id = 'payment-widget-container';
+        paymentContainer.style.cssText = `
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 400px;
+          max-height: 600px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          z-index: 9999;
+          overflow-y: auto;
+          padding: 20px;
+        `;
+        document.body.appendChild(paymentContainer);
+        
+        // 오버레이 생성
+        const overlay = document.createElement('div');
+        overlay.id = 'payment-overlay';
+        overlay.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 9998;
+        `;
+        document.body.appendChild(overlay);
+      }
+
       // 결제 위젯 렌더링
-      await widgetPayment.renderPaymentMethods('#payment-method', {
+      await widgets.renderPaymentMethods('#payment-widget-container', {
         amount: {
           currency: 'KRW',
           value: paymentData.amount,
@@ -67,7 +114,7 @@ export const usePayment = () => {
       });
 
       // 결제 요청
-      await widgetPayment.requestPayment({
+      await widgets.requestPayment({
         orderId,
         orderName: paymentData.orderName,
         customerEmail: paymentData.customerEmail,
@@ -83,6 +130,13 @@ export const usePayment = () => {
       };
     } catch (error: any) {
       console.error('Toss payment error:', error);
+      
+      // 결제 UI 정리
+      const container = document.getElementById('payment-widget-container');
+      const overlay = document.getElementById('payment-overlay');
+      if (container) container.remove();
+      if (overlay) overlay.remove();
+      
       return {
         success: false,
         error: error.message || '결제 요청 중 오류가 발생했습니다.',

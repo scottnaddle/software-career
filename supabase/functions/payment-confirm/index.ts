@@ -209,18 +209,88 @@ async function confirmKakaoPayment(paymentKey: string, orderId: string, amount: 
 }
 
 async function updateOrderStatus(supabase: any, orderId: string, status: string) {
-  // Update review request status if this is a review payment
-  const { data: reviewRequest } = await supabase
+  // First, find the payment record to get the payment details
+  const { data: payment } = await supabase
+    .from('payments')
+    .select('*')
+    .eq('order_id', orderId)
+    .single()
+
+  if (!payment) {
+    console.error('Payment not found for order:', orderId)
+    return
+  }
+
+  // If this is a verification payment, create a review request
+  if (payment.type === 'verification' && status === 'paid') {
+    // Find the most recent career entry for this user
+    const { data: career } = await supabase
+      .from('careers')
+      .select('*')
+      .eq('user_id', payment.user_id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (career) {
+      // Determine review fee and priority based on service type
+      const reviewFee = payment.service_type === 'express' ? 100000 : 50000
+      const priority = payment.service_type === 'express' ? 'high' : 'normal'
+
+      // Create review request
+      const { data: reviewRequest, error: reviewError } = await supabase
+        .from('review_requests')
+        .insert([
+          {
+            career_id: career.id,
+            user_id: payment.user_id,
+            payment_id: payment.id,
+            priority,
+            review_fee: reviewFee,
+            status: 'assigned',
+            requested_at: new Date().toISOString(),
+          }
+        ])
+        .select()
+        .single()
+
+      if (reviewError) {
+        console.error('Failed to create review request:', reviewError)
+      } else {
+        // Update career status to pending
+        await supabase
+          .from('careers')
+          .update({ status: 'pending' })
+          .eq('id', career.id)
+
+        // Create notification for user
+        await supabase.rpc('create_notification', {
+          p_user_id: payment.user_id,
+          p_type: 'review_requested',
+          p_title: '경력 검토가 시작되었습니다',
+          p_message: `${career.title} 경력의 검토가 시작되었습니다. 전문가 검토 후 결과를 알려드립니다.`,
+          p_data: {
+            career_id: career.id,
+            review_request_id: reviewRequest.id,
+            priority: priority
+          }
+        })
+      }
+    }
+  }
+
+  // Update existing review request status if it exists
+  const { data: existingReviewRequest } = await supabase
     .from('review_requests')
     .select('id')
     .eq('order_id', orderId)
     .single()
 
-  if (reviewRequest) {
+  if (existingReviewRequest) {
     await supabase
       .from('review_requests')
       .update({ payment_status: status })
-      .eq('id', reviewRequest.id)
+      .eq('id', existingReviewRequest.id)
   }
 }
 
