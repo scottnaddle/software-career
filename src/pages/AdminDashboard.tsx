@@ -141,6 +141,14 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       
+      // Debug: Log current user and auth state
+      console.log('🔍 Admin Dashboard Debug Info:');
+      console.log('Current user:', user);
+      console.log('Current profile:', profile);
+      console.log('Is admin check:', isAdmin);
+      console.log('User email:', user?.email);
+      console.log('Profile account_type:', profile?.account_type);
+      
       // Fetch comprehensive stats
       const [
         usersResult,
@@ -220,6 +228,9 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
+      console.log('📋 Expert applications fetched:', applications?.length || 0);
+      console.log('Expert applications data:', applications);
+
       setAllExperts(applications || []);
       
       // Set filtered applications based on current tab
@@ -245,6 +256,9 @@ const AdminDashboard: React.FC = () => {
         console.error('Error fetching payments:', error);
         return;
       }
+
+      console.log('💳 Payments fetched:', paymentsData?.length || 0);
+      console.log('Payments data:', paymentsData);
 
       setPayments(paymentsData || []);
     } catch (error) {
@@ -500,10 +514,38 @@ const AdminDashboard: React.FC = () => {
   if (!user || !isAdmin) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center max-w-2xl mx-auto p-8">
           <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">접근 권한이 없습니다</h1>
-          <p className="text-gray-600">관리자 권한이 필요합니다.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">관리자 접근 디버깅 정보</h1>
+          
+          <div className="bg-white p-6 rounded-lg shadow-md text-left space-y-4">
+            <div>
+              <h3 className="font-semibold text-gray-900">현재 사용자 정보:</h3>
+              <p className="text-sm text-gray-600">사용자 ID: {user?.id || 'None'}</p>
+              <p className="text-sm text-gray-600">이메일: {user?.email || 'None'}</p>
+              <p className="text-sm text-gray-600">로그인 상태: {user ? 'Yes' : 'No'}</p>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold text-gray-900">프로필 정보:</h3>
+              <p className="text-sm text-gray-600">계정 타입: {profile?.account_type || 'None'}</p>
+              <p className="text-sm text-gray-600">이름: {profile?.name || 'None'}</p>
+              <p className="text-sm text-gray-600">프로필 로드됨: {profile ? 'Yes' : 'No'}</p>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold text-gray-900">관리자 권한 체크:</h3>
+              <p className="text-sm text-gray-600">account_type === 'admin': {profile?.account_type === 'admin' ? 'Yes' : 'No'}</p>
+              <p className="text-sm text-gray-600">Email check: {user?.email && adminEmails.includes(user.email) ? 'Yes' : 'No'}</p>
+              <p className="text-sm text-gray-600">isAdmin 결과: {isAdmin ? 'Yes' : 'No'}</p>
+            </div>
+            
+            <div className="pt-4 border-t">
+              <p className="text-sm text-gray-500">
+                관리자 권한이 필요합니다. admin@k-xpert.co.kr 또는 admin@x-pert.co.kr로 로그인해주세요.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );
