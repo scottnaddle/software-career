@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Auth Debug</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Admin Authentication Debug Tool</h1>
+    <div id="auth-status"></div>
+    <div id="profile-info"></div>
+    
+    <script>
+        const supabaseUrl = 'https://gkzdxujvfqjqzjcljhts.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdremR4dWp2ZnFqcXpqY2xqaHRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUyNzIxMjIsImV4cCI6MjA1MDg0ODEyMn0.sKdJ-2dMYQ2jP-cKO6WnZPg7jbRqg3oqpXhxZh3Ku6Y'
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+        
+        async function checkAuthStatus() {
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+            
+            document.getElementById('auth-status').innerHTML = `
+                <h2>인증 상태</h2>
+                <pre>${JSON.stringify({
+                    session: session ? {
+                        user: {
+                            id: session.user.id,
+                            email: session.user.email,
+                            user_metadata: session.user.user_metadata
+                        }
+                    } : null,
+                    error: sessionError
+                }, null, 2)}</pre>
+            `
+            
+            if (session?.user) {
+                // 사용자 프로필 조회
+                const { data: profile, error: profileError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single()
+                
+                document.getElementById('profile-info').innerHTML = `
+                    <h2>프로필 정보</h2>
+                    <pre>${JSON.stringify({
+                        profile: profile,
+                        error: profileError
+                    }, null, 2)}</pre>
+                `
+                
+                // 관리자 권한 체크
+                const isAdmin = profile?.account_type === 'admin'
+                const adminEmails = ['admin@k-xpert.co.kr', 'admin@x-pert.co.kr']
+                const isAdminEmail = adminEmails.includes(session.user.email)
+                
+                document.getElementById('profile-info').innerHTML += `
+                    <h3>관리자 권한 체크</h3>
+                    <ul>
+                        <li>account_type === 'admin': ${isAdmin}</li>
+                        <li>이메일이 관리자 이메일인가: ${isAdminEmail}</li>
+                        <li>현재 이메일: ${session.user.email}</li>
+                        <li>프로필 account_type: ${profile?.account_type}</li>
+                    </ul>
+                `
+            }
+        }
+        
+        checkAuthStatus()
+    </script>
+</body>
+</html>
