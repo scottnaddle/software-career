@@ -188,7 +188,10 @@ const AdminDashboard: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (usersError) {
-        console.warn('Error fetching users:', usersError);
+        console.error('Error fetching users:', usersError);
+      } else {
+        console.log('Fetched users data:', usersData);
+        console.log('Users count:', usersData?.length);
       }
       setAllUsers(usersData || []);
 
