@@ -173,7 +173,36 @@ export function useAuth() {
         }
       } else {
         console.log('Profile found:', data);
-        setProfile(data);
+        
+        // Force admin account_type for admin emails
+        const email = data.email;
+        if ((email === 'admin@k-xpert.co.kr' || email === 'admin@x-pert.co.kr') && data.account_type !== 'admin') {
+          console.log('Fixing admin account_type for:', email);
+          
+          const updatedProfile = {
+            ...data,
+            account_type: 'admin',
+            verified: true
+          };
+          
+          // Update in database
+          const { error: updateError } = await supabase
+            .from('users')
+            .update({
+              account_type: 'admin',
+              verified: true,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', data.id);
+            
+          if (updateError) {
+            console.error('Error updating admin profile:', updateError);
+          }
+          
+          setProfile(updatedProfile);
+        } else {
+          setProfile(data);
+        }
       }
       
       setLoading(false);
