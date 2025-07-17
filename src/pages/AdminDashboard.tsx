@@ -80,7 +80,16 @@ const AdminDashboard: React.FC = () => {
   const itemsPerPage = 10;
 
   // Check if user is admin
-  const isAdmin = profile?.account_type === 'admin';
+  const adminEmails = ['admin@k-xpert.co.kr', 'admin@x-pert.co.kr'];
+  const isAdmin = profile?.account_type === 'admin' || (user?.email && adminEmails.includes(user.email));
+  
+  // Debug admin access
+  console.log('AdminDashboard debug:', {
+    user: user?.email,
+    profile: profile,
+    accountType: profile?.account_type,
+    isAdmin: isAdmin
+  });
 
   useEffect(() => {
     if (user && isAdmin) {
