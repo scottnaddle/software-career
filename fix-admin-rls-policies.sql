@@ -11,8 +11,7 @@ FOR ALL USING (
     SELECT 1 FROM users 
     WHERE users.id = auth.uid() 
     AND (users.account_type = 'admin' 
-         OR users.email = 'admin@k-xpert.co.kr' 
-         OR users.email = 'admin@x-pert.co.kr')
+         OR users.email = 'admin@k-xpert.co.kr')
   )
 );
 
@@ -24,8 +23,7 @@ FOR ALL USING (
     SELECT 1 FROM users 
     WHERE users.id = auth.uid() 
     AND (users.account_type = 'admin' 
-         OR users.email = 'admin@k-xpert.co.kr' 
-         OR users.email = 'admin@x-pert.co.kr')
+         OR users.email = 'admin@k-xpert.co.kr')
   )
 );
 
@@ -37,8 +35,7 @@ FOR ALL USING (
     SELECT 1 FROM users 
     WHERE users.id = auth.uid() 
     AND (users.account_type = 'admin' 
-         OR users.email = 'admin@k-xpert.co.kr' 
-         OR users.email = 'admin@x-pert.co.kr')
+         OR users.email = 'admin@k-xpert.co.kr')
   )
 );
 
@@ -63,15 +60,14 @@ FOR ALL USING (
     SELECT 1 FROM users 
     WHERE users.id = auth.uid() 
     AND (users.account_type = 'admin' 
-         OR users.email = 'admin@k-xpert.co.kr' 
-         OR users.email = 'admin@x-pert.co.kr')
+         OR users.email = 'admin@k-xpert.co.kr')
   )
 );
 
 -- Step 2: 관리자 계정의 account_type 확실히 설정
 UPDATE users 
 SET account_type = 'admin' 
-WHERE email IN ('admin@k-xpert.co.kr', 'admin@x-pert.co.kr');
+WHERE email = 'admin@k-xpert.co.kr';
 
 -- Step 3: 정책 적용 확인
 SELECT '=== 업데이트된 RLS 정책 확인 ===' as info;
@@ -100,5 +96,5 @@ SELECT
     updated_at
 FROM users 
 WHERE account_type = 'admin' 
-   OR email IN ('admin@k-xpert.co.kr', 'admin@x-pert.co.kr')
+   OR email = 'admin@k-xpert.co.kr'
 ORDER BY email;

@@ -128,7 +128,7 @@ const AdminDashboard: React.FC = () => {
   const itemsPerPage = 10;
 
   // Check if user is admin
-  const adminEmails = ['admin@k-xpert.co.kr', 'admin@x-pert.co.kr'];
+  const adminEmails = ['admin@k-xpert.co.kr'];
   const isAdmin = profile?.account_type === 'admin' || (user?.email && adminEmails.includes(user.email));
 
   useEffect(() => {
@@ -542,7 +542,7 @@ const AdminDashboard: React.FC = () => {
             
             <div className="pt-4 border-t">
               <p className="text-sm text-gray-500">
-                관리자 권한이 필요합니다. admin@k-xpert.co.kr 또는 admin@x-pert.co.kr로 로그인해주세요.
+                관리자 권한이 필요합니다. admin@k-xpert.co.kr로 로그인해주세요.
               </p>
             </div>
           </div>
