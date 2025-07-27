@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Filter, Eye, Download, Shield, Calendar, MapPin, Code, Award, ExternalLink, GraduationCap, Briefcase, FileText, User, CheckCircle, Edit, Star, Globe, BookOpen, Users } from 'lucide-react';
+import AdminDebug from '../components/AdminDebug';
+import AdminStatusCheck from '../components/AdminStatusCheck';
 
 const CareerSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -675,6 +677,14 @@ const CareerSearch = () => {
             </button>
           </div>
         </div>
+        
+        {/* Temporary Admin Debug Components */}
+        {import.meta.env.DEV && (
+          <>
+            <AdminDebug />
+            <AdminStatusCheck />
+          </>
+        )}
       </div>
     </div>
   );
