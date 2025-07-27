@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User as SupabaseUser, Session, AuthError } from '@supabase/supabase-js';
 import { supabase, User } from '../lib/supabase';
+import { ADMIN_EMAILS, LOADING_TIMEOUT } from '../constants';
 
 interface AuthContextType {
   user: SupabaseUser | null;
@@ -36,13 +37,17 @@ export function useAuth() {
   useEffect(() => {
     // Set a timeout to prevent infinite loading
     const loadingTimeout = setTimeout(() => {
-      console.log('Auth loading timeout - proceeding without authentication');
+      if (import.meta.env.DEV) {
+        console.log('Auth loading timeout - proceeding without authentication');
+      }
       setLoading(false);
-    }, 3000); // 3 seconds timeout
+    }, LOADING_TIMEOUT); // 3 seconds timeout
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Auth session retrieved:', !!session);
+      if (import.meta.env.DEV) {
+        console.log('Auth session retrieved:', !!session);
+      }
       clearTimeout(loadingTimeout);
       setSession(session);
       setUser(session?.user ?? null);
@@ -141,10 +146,10 @@ export function useAuth() {
               email: email || '',
               name: metadata.name || email?.split('@')[0] || 'User',
               phone: metadata.phone || null,
-              account_type: (email === 'admin@k-xpert.co.kr') ? 'admin' : (metadata.account_type || 'individual'),
+              account_type: ADMIN_EMAILS.includes(email || '') ? 'admin' : (metadata.account_type || 'individual'),
               company: metadata.company || null,
               position: metadata.position || null,
-              verified: (email === 'admin@k-xpert.co.kr') ? true : false,
+              verified: ADMIN_EMAILS.includes(email || '') ? true : false,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             };
@@ -176,7 +181,7 @@ export function useAuth() {
         
         // Force admin account_type for admin emails
         const email = data.email;
-        if ((email === 'admin@k-xpert.co.kr' || email === 'admin@x-pert.co.kr') && data.account_type !== 'admin') {
+        if (ADMIN_EMAILS.includes(email || '') && data.account_type !== 'admin') {
           console.log('Fixing admin account_type for:', email);
           
           const updatedProfile = {

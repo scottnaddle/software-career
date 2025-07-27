@@ -13,7 +13,9 @@ const CertificateIssue = () => {
   const [allIssuedCertificates, setAllIssuedCertificates] = useState([]);
 
   useEffect(() => {
-    console.log('CertificateIssue component mounted successfully');
+    if (import.meta.env.DEV) {
+      console.log('CertificateIssue component mounted successfully');
+    }
     // 기존 발급 이력 로드
     loadIssuedCertificates();
   }, []);

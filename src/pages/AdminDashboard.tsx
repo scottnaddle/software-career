@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import { ADMIN_EMAILS } from '../constants';
 import { 
   Users, UserCheck, CreditCard, BarChart3, Clock, CheckCircle, XCircle, AlertCircle, 
   Search, Filter, ChevronLeft, ChevronRight, Eye, Edit, Trash2, Award, 
@@ -107,7 +108,7 @@ const AdminDashboard: React.FC = () => {
     activeReviews: 0
   });
   
-  const [expertApplications, setExpertApplications] = useState<ExpertApplication[]>([]);
+  // Filtered expert applications (computed via useMemo)
   const [allExperts, setAllExperts] = useState<ExpertApplication[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [reviewRequests, setReviewRequests] = useState<ReviewRequest[]>([]);
@@ -127,27 +128,54 @@ const AdminDashboard: React.FC = () => {
   
   const itemsPerPage = 10;
 
-  // Check if user is admin
-  const adminEmails = ['admin@k-xpert.co.kr'];
-  const isAdmin = profile?.account_type === 'admin' || (user?.email && adminEmails.includes(user.email));
+  // Check if user is admin (memoized for performance)
+  const isAdmin = useMemo(() => 
+    profile?.account_type === 'admin' || (user?.email && ADMIN_EMAILS.includes(user.email)), 
+    [profile?.account_type, user?.email]
+  );
+
+  // Filtered expert applications (memoized for performance)
+  const expertApplications = useMemo(() => {
+    switch (expertTab) {
+      case 'pending':
+        return allExperts.filter(app => app.status === 'pending');
+      case 'approved':
+        return allExperts.filter(app => app.status === 'verified');
+      case 'rejected':
+        return allExperts.filter(app => app.status === 'rejected');
+      case 'all':
+      default:
+        return allExperts;
+    }
+  }, [allExperts, expertTab]);
+
+  // Expert tabs with counts (memoized for performance)
+  const expertTabs = useMemo(() => [
+    { id: 'pending', name: '승인 대기', count: stats.pendingExperts },
+    { id: 'approved', name: '승인 완료', count: stats.approvedExperts },
+    { id: 'rejected', name: '거절', count: stats.rejectedExperts },
+    { id: 'all', name: '전체', count: stats.pendingExperts + stats.approvedExperts + stats.rejectedExperts }
+  ], [stats.pendingExperts, stats.approvedExperts, stats.rejectedExperts]);
 
   useEffect(() => {
     if (user && isAdmin) {
       fetchDashboardData();
     }
-  }, [user, isAdmin]);
+  }, [user, isAdmin, fetchDashboardData]);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
       
-      // Debug: Log current user and auth state
-      console.log('🔍 Admin Dashboard Debug Info:');
-      console.log('Current user:', user);
-      console.log('Current profile:', profile);
-      console.log('Is admin check:', isAdmin);
-      console.log('User email:', user?.email);
-      console.log('Profile account_type:', profile?.account_type);
+      // Debug: Log current user and auth state (dev only)
+      if (import.meta.env.DEV) {
+        console.log('🔍 Admin Dashboard Debug Info:');
+        console.log('Current user:', user);
+        console.log('Current profile:', profile);
+        console.log('Is admin check:', isAdmin);
+        console.log('User email:', user?.email);
+        console.log('Profile account_type:', profile?.account_type);
+      }
       
       // Fetch comprehensive stats
       const [
@@ -211,9 +239,9 @@ const AdminDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchExpertApplications = async () => {
+  const fetchExpertApplications = useCallback(async () => {
     try {
       const { data: applications, error } = await supabase
         .from('expert_verifications')
@@ -228,8 +256,10 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
-      console.log('📋 Expert applications fetched:', applications?.length || 0);
-      console.log('Expert applications data:', applications);
+      if (import.meta.env.DEV) {
+        console.log('📋 Expert applications fetched:', applications?.length || 0);
+        console.log('Expert applications data:', applications);
+      }
 
       setAllExperts(applications || []);
       
@@ -239,9 +269,9 @@ const AdminDashboard: React.FC = () => {
     } catch (error) {
       console.error('Error in fetchExpertApplications:', error);
     }
-  };
+  }, []);
 
-  const fetchPayments = async () => {
+  const fetchPayments = useCallback(async () => {
     try {
       const { data: paymentsData, error } = await supabase
         .from('payments')
@@ -257,16 +287,18 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
-      console.log('💳 Payments fetched:', paymentsData?.length || 0);
-      console.log('Payments data:', paymentsData);
+      if (import.meta.env.DEV) {
+        console.log('💳 Payments fetched:', paymentsData?.length || 0);
+        console.log('Payments data:', paymentsData);
+      }
 
       setPayments(paymentsData || []);
     } catch (error) {
       console.error('Error in fetchPayments:', error);
     }
-  };
+  }, []);
 
-  const fetchReviewRequests = async () => {
+  const fetchReviewRequests = useCallback(async () => {
     try {
       const { data: reviewsData, error } = await supabase
         .from('review_requests')
@@ -287,9 +319,9 @@ const AdminDashboard: React.FC = () => {
     } catch (error) {
       console.error('Error in fetchReviewRequests:', error);
     }
-  };
+  }, []);
 
-  const fetchAllUsers = async () => {
+  const fetchAllUsers = useCallback(async () => {
     try {
       const { data: usersData, error } = await supabase
         .from('users')
@@ -305,9 +337,9 @@ const AdminDashboard: React.FC = () => {
     } catch (error) {
       console.error('Error in fetchAllUsers:', error);
     }
-  };
+  }, []);
 
-  const handleExpertAction = async (applicationId: string, action: 'approve' | 'reject', reason?: string) => {
+  const handleExpertAction = useCallback(async (applicationId: string, action: 'approve' | 'reject', reason?: string) => {
     try {
       const newStatus = action === 'approve' ? 'verified' : 'rejected';
       
@@ -370,32 +402,12 @@ const AdminDashboard: React.FC = () => {
     } catch (error) {
       console.error('Error updating expert application:', error);
     }
-  };
+  }, [allExperts, user?.id, fetchDashboardData]);
 
-  const handleExpertTabChange = (tab: 'pending' | 'approved' | 'rejected' | 'all') => {
+  const handleExpertTabChange = useCallback((tab: 'pending' | 'approved' | 'rejected' | 'all') => {
     setExpertTab(tab);
     setCurrentPage(1);
-    
-    let filteredExperts: ExpertApplication[] = [];
-    
-    switch (tab) {
-      case 'pending':
-        filteredExperts = allExperts.filter(expert => expert.status === 'pending');
-        break;
-      case 'approved':
-        filteredExperts = allExperts.filter(expert => expert.status === 'verified');
-        break;
-      case 'rejected':
-        filteredExperts = allExperts.filter(expert => expert.status === 'rejected');
-        break;
-      case 'all':
-      default:
-        filteredExperts = allExperts;
-        break;
-    }
-    
-    setExpertApplications(filteredExperts);
-  };
+  }, []);
 
   const handlePaymentStatusChange = async (paymentId: string, newStatus: string) => {
     try {
@@ -518,25 +530,28 @@ const AdminDashboard: React.FC = () => {
           <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-4">관리자 접근 디버깅 정보</h1>
           
-          <div className="bg-white p-6 rounded-lg shadow-md text-left space-y-4">
-            <div>
-              <h3 className="font-semibold text-gray-900">현재 사용자 정보:</h3>
-              <p className="text-sm text-gray-600">사용자 ID: {user?.id || 'None'}</p>
-              <p className="text-sm text-gray-600">이메일: {user?.email || 'None'}</p>
-              <p className="text-sm text-gray-600">로그인 상태: {user ? 'Yes' : 'No'}</p>
+          {import.meta.env.DEV && (
+            <div className="bg-white p-6 rounded-lg shadow-md text-left space-y-4">
+              <div>
+                <h3 className="font-semibold text-gray-900">현재 사용자 정보:</h3>
+                <p className="text-sm text-gray-600">사용자 ID: {user?.id || 'None'}</p>
+                <p className="text-sm text-gray-600">이메일: {user?.email || 'None'}</p>
+                <p className="text-sm text-gray-600">로그인 상태: {user ? 'Yes' : 'No'}</p>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold text-gray-900">프로필 정보:</h3>
+                <p className="text-sm text-gray-600">계정 타입: {profile?.account_type || 'None'}</p>
+                <p className="text-sm text-gray-600">이름: {profile?.name || 'None'}</p>
+                <p className="text-sm text-gray-600">프로필 로드됨: {profile ? 'Yes' : 'No'}</p>
+              </div>
             </div>
-            
-            <div>
-              <h3 className="font-semibold text-gray-900">프로필 정보:</h3>
-              <p className="text-sm text-gray-600">계정 타입: {profile?.account_type || 'None'}</p>
-              <p className="text-sm text-gray-600">이름: {profile?.name || 'None'}</p>
-              <p className="text-sm text-gray-600">프로필 로드됨: {profile ? 'Yes' : 'No'}</p>
-            </div>
+          )}
             
             <div>
               <h3 className="font-semibold text-gray-900">관리자 권한 체크:</h3>
               <p className="text-sm text-gray-600">account_type === 'admin': {profile?.account_type === 'admin' ? 'Yes' : 'No'}</p>
-              <p className="text-sm text-gray-600">Email check: {user?.email && adminEmails.includes(user.email) ? 'Yes' : 'No'}</p>
+              <p className="text-sm text-gray-600">Email check: {user?.email && ADMIN_EMAILS.includes(user.email) ? 'Yes' : 'No'}</p>
               <p className="text-sm text-gray-600">isAdmin 결과: {isAdmin ? 'Yes' : 'No'}</p>
             </div>
             
@@ -723,12 +738,7 @@ const AdminDashboard: React.FC = () => {
             {/* Expert Sub-tabs */}
             <div className="border-b border-gray-200">
               <nav className="-mb-px flex space-x-8">
-                {[
-                  { id: 'pending', name: '승인 대기', count: stats.pendingExperts },
-                  { id: 'approved', name: '승인 완료', count: stats.approvedExperts },
-                  { id: 'rejected', name: '거절', count: stats.rejectedExperts },
-                  { id: 'all', name: '전체', count: stats.pendingExperts + stats.approvedExperts + stats.rejectedExperts }
-                ].map((tab) => (
+                {expertTabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => handleExpertTabChange(tab.id as any)}
