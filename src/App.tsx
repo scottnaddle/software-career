@@ -5,6 +5,11 @@ import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 import Header from './components/Header';
 import Footer from './components/Footer';
+
+// Import admin utilities for development
+if (import.meta.env.DEV) {
+  import('./utils/createAdminAccount');
+}
 import Home from './pages/Home';
 import CareerRegistration from './pages/CareerRegistration';
 import CareerSearch from './pages/CareerSearch';

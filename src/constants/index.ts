@@ -1,5 +1,5 @@
 // Application constants
-export const ADMIN_EMAILS = ['admin@k-xpert.co.kr'];
+export const ADMIN_EMAILS = ['admin@k-xpert.co.kr', 'admin2@k-xpert.co.kr'];
 
 // Pagination constants
 export const ITEMS_PER_PAGE = 10;
