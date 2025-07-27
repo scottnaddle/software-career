@@ -179,32 +179,40 @@ export function useAuth() {
       } else {
         console.log('Profile found:', data);
         
-        // Force admin account_type for admin emails
-        const email = data.email;
-        if (ADMIN_EMAILS.includes(email || '') && data.account_type !== 'admin') {
-          console.log('Fixing admin account_type for:', email);
+        // Check if this is an admin user and needs account_type update
+        const userEmail = data.email;
+        const shouldBeAdmin = ADMIN_EMAILS.includes(userEmail || '');
+        const isCurrentlyAdmin = data.account_type === 'admin';
+        
+        if (shouldBeAdmin && !isCurrentlyAdmin) {
+          console.log('🔧 Updating admin account_type for:', userEmail);
           
-          const updatedProfile = {
-            ...data,
-            account_type: 'admin',
-            verified: true
-          };
-          
-          // Update in database
-          const { error: updateError } = await supabase
-            .from('users')
-            .update({
-              account_type: 'admin',
-              verified: true,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', data.id);
+          try {
+            // Update in database
+            const { data: updatedData, error: updateError } = await supabase
+              .from('users')
+              .update({
+                account_type: 'admin',
+                verified: true,
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', data.id)
+              .select()
+              .single();
             
-          if (updateError) {
-            console.error('Error updating admin profile:', updateError);
+            if (updateError) {
+              console.error('❌ Failed to update admin account_type:', updateError);
+              // Set profile anyway with admin flag for immediate access
+              setProfile({ ...data, account_type: 'admin', verified: true });
+            } else {
+              console.log('✅ Successfully updated admin account_type');
+              setProfile(updatedData);
+            }
+          } catch (updateErr) {
+            console.error('❌ Error during admin update:', updateErr);
+            // Set profile anyway with admin flag for immediate access
+            setProfile({ ...data, account_type: 'admin', verified: true });
           }
-          
-          setProfile(updatedProfile);
         } else {
           setProfile(data);
         }

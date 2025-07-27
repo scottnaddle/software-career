@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, FileText, Award, HelpCircle, LogOut, Settings, Shield } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import NotificationDropdown from './NotificationDropdown';
+import AdminDebug from './AdminDebug';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -361,6 +362,9 @@ const Header = () => {
           </div>
         )}
       </div>
+      
+      {/* 디버그 정보 - 개발 환경에서만 표시 */}
+      {import.meta.env.DEV && user && <AdminDebug />}
     </header>
   );
 };
