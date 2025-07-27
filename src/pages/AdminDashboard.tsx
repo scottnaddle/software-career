@@ -129,10 +129,27 @@ const AdminDashboard: React.FC = () => {
   const itemsPerPage = 10;
 
   // Check if user is admin (memoized for performance)
-  const isAdmin = useMemo(() => 
-    profile?.account_type === 'admin' || (user?.email && ADMIN_EMAILS.includes(user.email)), 
-    [profile?.account_type, user?.email]
-  );
+  const isAdmin = useMemo(() => {
+    const adminByProfile = profile?.account_type === 'admin';
+    const adminByEmail = user?.email && ADMIN_EMAILS.includes(user.email);
+    const profileEmail = profile?.email && ADMIN_EMAILS.includes(profile.email);
+    
+    // Log detailed admin check
+    if (import.meta.env.DEV) {
+      console.log('🔍 AdminDashboard - Admin Check Details:', {
+        userEmail: user?.email,
+        profileEmail: profile?.email,
+        profileAccountType: profile?.account_type,
+        adminEmails: ADMIN_EMAILS,
+        adminByProfile,
+        adminByEmail,
+        profileEmail,
+        finalResult: adminByProfile || adminByEmail || profileEmail
+      });
+    }
+    
+    return adminByProfile || adminByEmail || profileEmail;
+  }, [profile?.account_type, profile?.email, user?.email]);
 
   // Filtered expert applications (memoized for performance)
   const expertApplications = useMemo(() => {
@@ -262,10 +279,6 @@ const AdminDashboard: React.FC = () => {
       }
 
       setAllExperts(applications || []);
-      
-      // Set filtered applications based on current tab
-      const pending = applications?.filter(app => app.status === 'pending') || [];
-      setExpertApplications(pending);
     } catch (error) {
       console.error('Error in fetchExpertApplications:', error);
     }
