@@ -144,7 +144,7 @@ const AdminDashboard: React.FC = () => {
         adminEmails: ADMIN_EMAILS,
         adminByProfile,
         adminByEmail,
-        profileEmail,
+        profileEmailCheck: profileEmail,
         finalResult: adminByProfile || adminByEmail || profileEmail
       });
     }
