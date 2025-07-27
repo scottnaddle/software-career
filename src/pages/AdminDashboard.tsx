@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { ADMIN_EMAILS } from '../constants';
+import AdminDebug from '../components/AdminDebug';
 import { 
   Users, UserCheck, CreditCard, BarChart3, Clock, CheckCircle, XCircle, AlertCircle, 
   Search, Filter, ChevronLeft, ChevronRight, Eye, Edit, Trash2, Award, 
@@ -574,6 +575,9 @@ const AdminDashboard: React.FC = () => {
             </p>
           </div>
         </div>
+        
+        {/* Detailed Debug Component */}
+        <AdminDebug />
       </div>
     );
   }
