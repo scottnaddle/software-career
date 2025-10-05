@@ -254,7 +254,7 @@ export function useAuth() {
         console.log('Profile set to:', data);
         console.log('Profile account_type:', data?.account_type);
       }
-      
+
       setLoading(false);
     } catch (error) {
       console.error('Error in fetchProfile:', error);

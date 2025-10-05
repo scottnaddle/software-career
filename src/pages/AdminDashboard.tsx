@@ -2,10 +2,9 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { ADMIN_EMAILS } from '../constants';
-import AdminDebug from '../components/AdminDebug';
-import { 
-  Users, UserCheck, CreditCard, BarChart3, Clock, CheckCircle, XCircle, AlertCircle, 
-  Search, Filter, ChevronLeft, ChevronRight, Eye, Edit, Trash2, Award, 
+import {
+  Users, UserCheck, CreditCard, BarChart3, Clock, CheckCircle, XCircle, AlertCircle,
+  Search, Filter, ChevronLeft, ChevronRight, Eye, Edit, Trash2, Award,
   FileText, DollarSign, Calendar, Star, MessageSquare, Download, RefreshCw
 } from 'lucide-react';
 
@@ -543,7 +542,7 @@ const AdminDashboard: React.FC = () => {
         <div className="text-center max-w-2xl mx-auto p-8">
           <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-4">관리자 접근 디버깅 정보</h1>
-          
+
           {import.meta.env.DEV && (
             <div className="bg-white p-6 rounded-lg shadow-md text-left space-y-4">
               <div>
@@ -552,7 +551,7 @@ const AdminDashboard: React.FC = () => {
                 <p className="text-sm text-gray-600">이메일: {user?.email || 'None'}</p>
                 <p className="text-sm text-gray-600">로그인 상태: {user ? 'Yes' : 'No'}</p>
               </div>
-              
+
               <div>
                 <h3 className="font-semibold text-gray-900">프로필 정보:</h3>
                 <p className="text-sm text-gray-600">계정 타입: {profile?.account_type || 'None'}</p>
@@ -561,23 +560,20 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
           )}
-            
+
           <div>
             <h3 className="font-semibold text-gray-900">관리자 권한 체크:</h3>
             <p className="text-sm text-gray-600">account_type === 'admin': {profile?.account_type === 'admin' ? 'Yes' : 'No'}</p>
             <p className="text-sm text-gray-600">Email check: {user?.email && ADMIN_EMAILS.includes(user.email) ? 'Yes' : 'No'}</p>
             <p className="text-sm text-gray-600">isAdmin 결과: {isAdmin ? 'Yes' : 'No'}</p>
           </div>
-          
+
           <div className="pt-4 border-t">
             <p className="text-sm text-gray-500">
               관리자 권한이 필요합니다. admin@k-xpert.co.kr로 로그인해주세요.
             </p>
           </div>
         </div>
-        
-        {/* Detailed Debug Component */}
-        <AdminDebug />
       </div>
     );
   }

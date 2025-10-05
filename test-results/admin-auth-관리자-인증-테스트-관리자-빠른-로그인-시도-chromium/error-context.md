@@ -1,0 +1,655 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - link "K-Xpert 글로벌 비즈니스 전문가 플랫폼" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e9] [cursor=pointer]:
+          - img [ref=e11] [cursor=pointer]
+          - generic [ref=e14] [cursor=pointer]:
+            - generic [ref=e16] [cursor=pointer]: K-Xpert
+            - generic [ref=e17] [cursor=pointer]: 글로벌 비즈니스 전문가 플랫폼
+      - navigation [ref=e18]:
+        - link "경력 등록" [ref=e19] [cursor=pointer]:
+          - /url: /career-registration
+        - link "경력 조회" [ref=e20] [cursor=pointer]:
+          - /url: /career-search
+        - link "증명서 발급" [ref=e21] [cursor=pointer]:
+          - /url: /certificate-issue
+        - link "기업 서비스" [ref=e22] [cursor=pointer]:
+          - /url: /enterprise
+        - link "이용 안내" [ref=e23] [cursor=pointer]:
+          - /url: /guide
+          - img [ref=e24] [cursor=pointer]
+          - text: 이용 안내
+      - generic [ref=e27]:
+        - button [ref=e29] [cursor=pointer]:
+          - img [ref=e30] [cursor=pointer]
+        - button "admin 관리자" [ref=e34] [cursor=pointer]:
+          - img [ref=e36] [cursor=pointer]
+          - generic [ref=e39] [cursor=pointer]:
+            - generic [ref=e40] [cursor=pointer]: admin
+            - generic [ref=e41] [cursor=pointer]: 관리자
+          - img [ref=e43] [cursor=pointer]
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - heading "관리자 권한 디버그 정보" [level=3] [ref=e47]
+        - generic [ref=e48]:
+          - button "프로필 새로고침" [ref=e49] [cursor=pointer]
+          - button "디버그 정보 숨기기" [ref=e50] [cursor=pointer]:
+            - img [ref=e51] [cursor=pointer]
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - strong [ref=e56]: "현재 사용자:"
+          - list [ref=e57]:
+            - listitem [ref=e58]: "ID: 4aaf6527-5737-4c17-a6e2-7ea12a0fd430"
+            - listitem [ref=e59]: "Email: admin@k-xpert.co.kr"
+            - listitem [ref=e60]: "Email Confirmed: Yes"
+        - generic [ref=e61]:
+          - strong [ref=e62]: "프로필 정보:"
+          - list [ref=e63]:
+            - listitem [ref=e64]: "Profile ID: null"
+            - listitem [ref=e65]: "Profile Email: null"
+            - listitem [ref=e66]: "Account Type: null"
+            - listitem [ref=e67]: "Name: null"
+            - listitem [ref=e68]: "Verified: No"
+        - generic [ref=e69]:
+          - strong [ref=e70]: "관리자 확인:"
+          - list [ref=e71]:
+            - listitem [ref=e72]: "Admin Emails: [\"admin@k-xpert.co.kr\",\"admin2@k-xpert.co.kr\"]"
+            - listitem [ref=e73]: "Is Admin by Email: Yes"
+            - listitem [ref=e74]: "Is Admin by Profile: No"
+            - listitem [ref=e75]:
+              - strong [ref=e76]: "Final Is Admin: Yes"
+        - generic [ref=e77]:
+          - strong [ref=e78]: "Raw Data:"
+          - generic [ref=e79]: "User: { \"id\": \"4aaf6527-5737-4c17-a6e2-7ea12a0fd430\", \"aud\": \"authenticated\", \"role\": \"authenticated\", \"email\": \"admin@k-xpert.co.kr\", \"email_confirmed_at\": \"2025-07-15T02:55:52.980221Z\", \"phone\": \"\", \"confirmed_at\": \"2025-07-15T02:55:52.980221Z\", \"last_sign_in_at\": \"2025-10-05T04:05:06.022297076Z\", \"app_metadata\": { \"provider\": \"email\", \"providers\": [ \"email\" ] }, \"user_metadata\": { \"account_type\": \"admin\", \"email_verified\": true, \"name\": \"K-Xpert 관리자\" }, \"identities\": [ { \"identity_id\": \"61e15ccd-4586-4676-8bea-87a7afcefacb\", \"id\": \"4aaf6527-5737-4c17-a6e2-7ea12a0fd430\", \"user_id\": \"4aaf6527-5737-4c17-a6e2-7ea12a0fd430\", \"identity_data\": { \"email\": \"admin@k-xpert.co.kr\", \"email_verified\": false, \"phone_verified\": false, \"sub\": \"4aaf6527-5737-4c17-a6e2-7ea12a0fd430\" }, \"provider\": \"email\", \"last_sign_in_at\": \"2025-07-15T02:55:52.974025Z\", \"created_at\": \"2025-07-15T02:55:52.974077Z\", \"updated_at\": \"2025-07-15T02:55:52.974077Z\", \"email\": \"admin@k-xpert.co.kr\" } ], \"created_at\": \"2025-07-15T02:55:52.972565Z\", \"updated_at\": \"2025-10-05T04:05:06.064905Z\", \"is_anonymous\": false }"
+          - generic [ref=e80]: "Profile: null"
+  - generic [ref=e82]:
+    - generic [ref=e83]:
+      - generic [ref=e84]:
+        - heading "경력 조회" [level=1] [ref=e85]
+        - paragraph [ref=e86]: 등록한 모든 경력의 검증 상태를 확인하고 관리하세요. 검증 완료된 경력은 언제든지 증명서로 발급받을 수 있습니다.
+      - generic [ref=e87]:
+        - img [ref=e88]
+        - textbox "경력명, 회사명으로 검색..." [ref=e91]
+    - generic [ref=e92]:
+      - generic [ref=e93]:
+        - heading "전문가 프로필" [level=2] [ref=e94]
+        - button "수정" [ref=e95] [cursor=pointer]:
+          - img [ref=e96] [cursor=pointer]
+          - text: 수정
+      - generic [ref=e99]:
+        - generic [ref=e101]:
+          - generic [ref=e102]: 김
+          - generic [ref=e103]:
+            - generic [ref=e104]:
+              - heading "김글로벌" [level=3] [ref=e105]
+              - generic [ref=e106]: KOICA 특급
+            - paragraph [ref=e107]: 시니어 글로벌 비즈니스 매니저
+            - paragraph [ref=e108]: 삼성전자
+            - generic [ref=e109]:
+              - generic [ref=e110]:
+                - generic [ref=e111]: "이메일:"
+                - text: kim.global@example.com
+              - generic [ref=e112]:
+                - generic [ref=e113]: "연락처:"
+                - text: 010-1234-5678
+              - generic [ref=e114]:
+                - generic [ref=e115]: "총 경력:"
+                - text: 8년 3개월
+              - generic [ref=e116]:
+                - generic [ref=e117]: "검증된 경력:"
+                - text: 12개
+            - generic [ref=e118]:
+              - generic [ref=e119]: "전문 분야:"
+              - generic [ref=e120]:
+                - generic [ref=e121]: 국제개발협력
+                - generic [ref=e122]: 프로젝트 관리
+                - generic [ref=e123]: 정책 컨설팅
+                - generic [ref=e124]: 역량강화
+            - generic [ref=e125]:
+              - generic [ref=e126]: "언어 능력:"
+              - generic [ref=e127]:
+                - generic [ref=e128]: 한국어(모국어)
+                - generic [ref=e129]: 영어(고급)
+                - generic [ref=e130]: 스페인어(중급)
+        - generic [ref=e131]:
+          - heading "획득 뱃지" [level=4] [ref=e132]
+          - generic [ref=e133]:
+            - generic [ref=e135]:
+              - img [ref=e137]
+              - generic [ref=e139]:
+                - heading "KOICA 특급 전문가" [level=5] [ref=e140]
+                - paragraph [ref=e141]: "등급: 특급"
+                - paragraph [ref=e142]: "발급일: 2023.03.15"
+            - generic [ref=e144]:
+              - img [ref=e146]
+              - generic [ref=e149]:
+                - heading "ODA 기초교육 수료" [level=5] [ref=e150]
+                - paragraph [ref=e151]: "발급일: 2022.08.20"
+            - generic [ref=e153]:
+              - img [ref=e155]
+              - generic [ref=e158]:
+                - heading "ODA 심화교육 수료" [level=5] [ref=e159]
+                - paragraph [ref=e160]: "발급일: 2023.01.10"
+            - generic [ref=e162]:
+              - img [ref=e164]
+              - generic [ref=e169]:
+                - heading "글로벌 프로젝트 관리 인증" [level=5] [ref=e170]
+                - paragraph [ref=e171]: "발급일: 2023.06.05"
+            - generic [ref=e173]:
+              - img [ref=e175]
+              - generic [ref=e178]:
+                - heading "국제개발협력 전문가" [level=5] [ref=e179]
+                - paragraph [ref=e180]: "발급일: 2022.11.30"
+    - generic [ref=e181]:
+      - generic [ref=e183]:
+        - img [ref=e185]
+        - generic [ref=e188]:
+          - generic [ref=e189]: "7"
+          - generic [ref=e190]: 총 경력
+      - generic [ref=e192]:
+        - img [ref=e194]
+        - generic [ref=e196]:
+          - generic [ref=e197]: "6"
+          - generic [ref=e198]: 검증완료
+      - generic [ref=e200]:
+        - img [ref=e202]
+        - generic [ref=e204]:
+          - generic [ref=e205]: "1"
+          - generic [ref=e206]: 검증대기
+      - generic [ref=e208]:
+        - img [ref=e210]
+        - generic [ref=e213]:
+          - generic [ref=e214]: "6"
+          - generic [ref=e215]: 발급가능
+    - generic [ref=e216]:
+      - navigation "Tabs" [ref=e218]:
+        - button "전체 7" [ref=e219] [cursor=pointer]:
+          - img [ref=e220] [cursor=pointer]
+          - generic [ref=e223] [cursor=pointer]: 전체
+          - generic [ref=e224] [cursor=pointer]: "7"
+        - button "근무경력 1" [ref=e225] [cursor=pointer]:
+          - img [ref=e226] [cursor=pointer]
+          - generic [ref=e229] [cursor=pointer]: 근무경력
+          - generic [ref=e230] [cursor=pointer]: "1"
+        - button "프로젝트 2" [ref=e231] [cursor=pointer]:
+          - img [ref=e232] [cursor=pointer]
+          - generic [ref=e235] [cursor=pointer]: 프로젝트
+          - generic [ref=e236] [cursor=pointer]: "2"
+        - button "학력 2" [ref=e237] [cursor=pointer]:
+          - img [ref=e238] [cursor=pointer]
+          - generic [ref=e241] [cursor=pointer]: 학력
+          - generic [ref=e242] [cursor=pointer]: "2"
+        - button "자격증 2" [ref=e243] [cursor=pointer]:
+          - img [ref=e244] [cursor=pointer]
+          - generic [ref=e247] [cursor=pointer]: 자격증
+          - generic [ref=e248] [cursor=pointer]: "2"
+      - generic [ref=e250]:
+        - generic [ref=e251]:
+          - generic [ref=e253]:
+            - img [ref=e255]
+            - generic [ref=e258]:
+              - generic [ref=e259]:
+                - heading "전자상거래 플랫폼 개발" [level=3] [ref=e260]
+                - generic [ref=e261]:
+                  - img [ref=e262]
+                  - text: 검증완료
+              - generic [ref=e264]:
+                - generic [ref=e265]:
+                  - img [ref=e266]
+                  - generic [ref=e269]: 네이버
+                - generic [ref=e270]:
+                  - img [ref=e271]
+                  - generic [ref=e273]: 2023.03 - 2023.12
+                - generic [ref=e274]: 백엔드 개발자
+              - paragraph [ref=e275]: 대규모 전자상거래 플랫폼의 주문 처리 시스템 개발 및 성능 최적화
+              - generic [ref=e276]:
+                - generic [ref=e277]: "기술 스택:"
+                - generic [ref=e278]:
+                  - generic [ref=e279]: Java
+                  - generic [ref=e280]: Spring Boot
+                  - generic [ref=e281]: MySQL
+                  - generic [ref=e282]: Redis
+              - generic [ref=e283]:
+                - generic [ref=e284]: "주요 성과:"
+                - list [ref=e285]:
+                  - listitem [ref=e286]: 시스템 성능 30% 향상
+                  - listitem [ref=e287]: 주문 처리량 2배 증가
+              - generic [ref=e288]: "검증일: 2024.01.15"
+          - generic [ref=e289]:
+            - generic [ref=e290]:
+              - button "상세보기" [ref=e291] [cursor=pointer]:
+                - img [ref=e292] [cursor=pointer]
+                - text: 상세보기
+              - button "증명서 발급" [ref=e295] [cursor=pointer]:
+                - img [ref=e296] [cursor=pointer]
+                - text: 증명서 발급
+            - generic [ref=e299]:
+              - button "수정" [ref=e300] [cursor=pointer]
+              - button "증명서 발급" [ref=e301] [cursor=pointer]:
+                - text: 증명서 발급
+                - img [ref=e302] [cursor=pointer]
+        - generic [ref=e306]:
+          - generic [ref=e308]:
+            - img [ref=e310]
+            - generic [ref=e313]:
+              - generic [ref=e314]:
+                - heading "컴퓨터공학과" [level=3] [ref=e315]
+                - generic [ref=e316]:
+                  - img [ref=e317]
+                  - text: 검증완료
+              - generic [ref=e319]:
+                - generic [ref=e320]:
+                  - img [ref=e321]
+                  - generic [ref=e324]: 서울대학교
+                - generic [ref=e325]:
+                  - img [ref=e326]
+                  - generic [ref=e328]: 2018.03 - 2022.02
+                - generic [ref=e329]: 학사 졸업
+              - paragraph [ref=e330]: 컴퓨터공학 전공, 학점 3.8/4.5 (magna cum laude)
+              - generic [ref=e331]:
+                - generic [ref=e332]:
+                  - generic [ref=e333]: "학위:"
+                  - text: 학사
+                - generic [ref=e334]:
+                  - generic [ref=e335]: "학점:"
+                  - text: 3.8/4.5
+                - generic [ref=e336]:
+                  - generic [ref=e337]: "주요 활동:"
+                  - text: 프로그래밍 동아리 회장해커톤 대회 우승
+              - generic [ref=e338]: "검증일: 2022.03.10"
+          - generic [ref=e339]:
+            - generic [ref=e340]:
+              - button "상세보기" [ref=e341] [cursor=pointer]:
+                - img [ref=e342] [cursor=pointer]
+                - text: 상세보기
+              - button "증명서 발급" [ref=e345] [cursor=pointer]:
+                - img [ref=e346] [cursor=pointer]
+                - text: 증명서 발급
+            - generic [ref=e349]:
+              - button "수정" [ref=e350] [cursor=pointer]
+              - button "증명서 발급" [ref=e351] [cursor=pointer]:
+                - text: 증명서 발급
+                - img [ref=e352] [cursor=pointer]
+        - generic [ref=e356]:
+          - generic [ref=e358]:
+            - img [ref=e360]
+            - generic [ref=e363]:
+              - generic [ref=e364]:
+                - heading "정보처리기사" [level=3] [ref=e365]
+                - generic [ref=e366]:
+                  - img [ref=e367]
+                  - text: 검증완료
+              - generic [ref=e369]:
+                - generic [ref=e370]:
+                  - img [ref=e371]
+                  - generic [ref=e374]: 한국산업인력공단
+                - generic [ref=e375]:
+                  - img [ref=e376]
+                  - generic [ref=e378]: 2022.08.20
+                - generic [ref=e379]: 자격증 취득
+              - paragraph [ref=e380]: 정보처리기사 자격증 취득 (필기 85점, 실기 합격)
+              - generic [ref=e381]:
+                - generic [ref=e382]:
+                  - generic [ref=e383]: "자격증 번호:"
+                  - text: KQ22080012345
+                - generic [ref=e384]:
+                  - generic [ref=e385]: "발급일:"
+                  - text: 2022.08.20
+              - generic [ref=e386]: "검증일: 2022.09.05"
+          - generic [ref=e387]:
+            - generic [ref=e388]:
+              - button "상세보기" [ref=e389] [cursor=pointer]:
+                - img [ref=e390] [cursor=pointer]
+                - text: 상세보기
+              - button "증명서 발급" [ref=e393] [cursor=pointer]:
+                - img [ref=e394] [cursor=pointer]
+                - text: 증명서 발급
+            - generic [ref=e397]:
+              - button "수정" [ref=e398] [cursor=pointer]
+              - button "증명서 발급" [ref=e399] [cursor=pointer]:
+                - text: 증명서 발급
+                - img [ref=e400] [cursor=pointer]
+        - generic [ref=e404]:
+          - generic [ref=e406]:
+            - img [ref=e408]
+            - generic [ref=e411]:
+              - generic [ref=e412]:
+                - heading "AI 챗봇 서비스 개발" [level=3] [ref=e413]
+                - generic [ref=e414]:
+                  - img [ref=e415]
+                  - text: 검증완료
+              - generic [ref=e417]:
+                - generic [ref=e418]:
+                  - img [ref=e419]
+                  - generic [ref=e422]: 스타트업 A
+                - generic [ref=e423]:
+                  - img [ref=e424]
+                  - generic [ref=e426]: 2022.01 - 2022.08
+                - generic [ref=e427]: 풀스택 개발자
+              - paragraph [ref=e428]: 자연어 처리 기반 고객 상담 챗봇 서비스 개발
+              - generic [ref=e429]:
+                - generic [ref=e430]: "기술 스택:"
+                - generic [ref=e431]:
+                  - generic [ref=e432]: Python
+                  - generic [ref=e433]: FastAPI
+                  - generic [ref=e434]: React
+                  - generic [ref=e435]: PostgreSQL
+              - generic [ref=e436]:
+                - generic [ref=e437]: "주요 성과:"
+                - list [ref=e438]:
+                  - listitem [ref=e439]: 고객 만족도 95% 달성
+                  - listitem [ref=e440]: 응답 시간 50% 단축
+              - generic [ref=e441]: "검증일: 2022.09.05"
+          - generic [ref=e442]:
+            - generic [ref=e443]:
+              - button "상세보기" [ref=e444] [cursor=pointer]:
+                - img [ref=e445] [cursor=pointer]
+                - text: 상세보기
+              - button "증명서 발급" [ref=e448] [cursor=pointer]:
+                - img [ref=e449] [cursor=pointer]
+                - text: 증명서 발급
+            - generic [ref=e452]:
+              - button "수정" [ref=e453] [cursor=pointer]
+              - button "증명서 발급" [ref=e454] [cursor=pointer]:
+                - text: 증명서 발급
+                - img [ref=e455] [cursor=pointer]
+        - generic [ref=e459]:
+          - generic [ref=e461]:
+            - img [ref=e463]
+            - generic [ref=e466]:
+              - generic [ref=e467]:
+                - heading "네이버" [level=3] [ref=e468]
+                - generic [ref=e469]:
+                  - img [ref=e470]
+                  - text: 검증완료
+              - generic [ref=e472]:
+                - generic [ref=e473]:
+                  - img [ref=e474]
+                  - generic [ref=e477]: 네이버
+                - generic [ref=e478]:
+                  - img [ref=e479]
+                  - generic [ref=e481]: 2022.09 - 2024.01
+                - generic [ref=e482]: 백엔드 개발자
+              - paragraph [ref=e483]: 검색 서비스 백엔드 개발 및 대용량 트래픽 처리 시스템 구축
+              - generic [ref=e484]:
+                - generic [ref=e485]:
+                  - generic [ref=e486]: "부서:"
+                  - text: 검색개발팀
+                - generic [ref=e487]:
+                  - generic [ref=e488]: "고용형태:"
+                  - text: 정규직
+              - generic [ref=e489]:
+                - generic [ref=e490]: "기술 스택:"
+                - generic [ref=e491]:
+                  - generic [ref=e492]: Java
+                  - generic [ref=e493]: Spring Boot
+                  - generic [ref=e494]: Kafka
+                  - generic [ref=e495]: Redis
+                  - generic [ref=e496]: MySQL
+              - generic [ref=e497]:
+                - generic [ref=e498]: "주요 성과:"
+                - list [ref=e499]:
+                  - listitem [ref=e500]: 검색 응답 속도 40% 개선
+                  - listitem [ref=e501]: 시스템 안정성 99.9% 달성
+              - generic [ref=e502]: "검증일: 2024.02.01"
+          - generic [ref=e503]:
+            - generic [ref=e504]:
+              - button "상세보기" [ref=e505] [cursor=pointer]:
+                - img [ref=e506] [cursor=pointer]
+                - text: 상세보기
+              - button "증명서 발급" [ref=e509] [cursor=pointer]:
+                - img [ref=e510] [cursor=pointer]
+                - text: 증명서 발급
+            - generic [ref=e513]:
+              - button "수정" [ref=e514] [cursor=pointer]
+              - button "증명서 발급" [ref=e515] [cursor=pointer]:
+                - text: 증명서 발급
+                - img [ref=e516] [cursor=pointer]
+        - generic [ref=e520]:
+          - generic [ref=e522]:
+            - img [ref=e524]
+            - generic [ref=e527]:
+              - generic [ref=e528]:
+                - heading "모바일 앱 개발 부트캠프" [level=3] [ref=e529]
+                - generic [ref=e530]:
+                  - img [ref=e531]
+                  - text: 검증대기
+              - generic [ref=e533]:
+                - generic [ref=e534]:
+                  - img [ref=e535]
+                  - generic [ref=e538]: 패스트캠퍼스
+                - generic [ref=e539]:
+                  - img [ref=e540]
+                  - generic [ref=e542]: 2021.09 - 2022.02
+                - generic [ref=e543]: 수강생
+              - paragraph [ref=e544]: 6개월 집중 모바일 앱 개발 과정 수료 (우수 수료생)
+              - generic [ref=e545]:
+                - generic [ref=e546]:
+                  - generic [ref=e547]: "수료율:"
+                  - text: 100%
+                - generic [ref=e548]:
+                  - generic [ref=e549]: "최종 프로젝트:"
+                  - text: 음식 배달 앱 개발
+              - generic [ref=e550]:
+                - generic [ref=e551]: "기술 스택:"
+                - generic [ref=e552]:
+                  - generic [ref=e553]: React Native
+                  - generic [ref=e554]: JavaScript
+                  - generic [ref=e555]: Firebase
+          - generic [ref=e556]:
+            - button "상세보기" [ref=e558] [cursor=pointer]:
+              - img [ref=e559] [cursor=pointer]
+              - text: 상세보기
+            - button "수정" [ref=e563] [cursor=pointer]
+        - generic [ref=e564]:
+          - generic [ref=e566]:
+            - img [ref=e568]
+            - generic [ref=e571]:
+              - generic [ref=e572]:
+                - heading "AWS Solutions Architect" [level=3] [ref=e573]
+                - generic [ref=e574]:
+                  - img [ref=e575]
+                  - text: 검증완료
+              - generic [ref=e577]:
+                - generic [ref=e578]:
+                  - img [ref=e579]
+                  - generic [ref=e582]: Amazon Web Services
+                - generic [ref=e583]:
+                  - img [ref=e584]
+                  - generic [ref=e586]: 2023.05.15
+                - generic [ref=e587]: 자격증 취득
+              - paragraph [ref=e588]: AWS 솔루션 아키텍트 어소시에이트 자격증 취득
+              - generic [ref=e589]:
+                - generic [ref=e590]:
+                  - generic [ref=e591]: "자격증 번호:"
+                  - text: AWS-SAA-2023-051234
+                - generic [ref=e592]:
+                  - generic [ref=e593]: "발급일:"
+                  - text: 2023.05.15
+                - generic [ref=e594]:
+                  - generic [ref=e595]: "유효기간:"
+                  - text: 2026.05.15
+              - generic [ref=e596]: "검증일: 2023.06.01"
+          - generic [ref=e597]:
+            - generic [ref=e598]:
+              - button "상세보기" [ref=e599] [cursor=pointer]:
+                - img [ref=e600] [cursor=pointer]
+                - text: 상세보기
+              - button "증명서 발급" [ref=e603] [cursor=pointer]:
+                - img [ref=e604] [cursor=pointer]
+                - text: 증명서 발급
+            - generic [ref=e607]:
+              - button "수정" [ref=e608] [cursor=pointer]
+              - button "증명서 발급" [ref=e609] [cursor=pointer]:
+                - text: 증명서 발급
+                - img [ref=e610] [cursor=pointer]
+    - generic [ref=e614]:
+      - heading "빠른 작업" [level=3] [ref=e615]
+      - generic [ref=e616]:
+        - button "종합 경력증명서 발급 모든 검증된 경력 포함" [ref=e617] [cursor=pointer]:
+          - generic [ref=e618] [cursor=pointer]:
+            - img [ref=e619] [cursor=pointer]
+            - generic [ref=e622] [cursor=pointer]: 종합 경력증명서 발급
+            - generic [ref=e623] [cursor=pointer]: 모든 검증된 경력 포함
+        - button "선택 경력증명서 발급 원하는 경력만 선택" [ref=e624] [cursor=pointer]:
+          - generic [ref=e625] [cursor=pointer]:
+            - img [ref=e626] [cursor=pointer]
+            - generic [ref=e629] [cursor=pointer]: 선택 경력증명서 발급
+            - generic [ref=e630] [cursor=pointer]: 원하는 경력만 선택
+        - button "경력 데이터 내보내기 PDF, Excel 형식" [ref=e631] [cursor=pointer]:
+          - generic [ref=e632] [cursor=pointer]:
+            - img [ref=e633] [cursor=pointer]
+            - generic [ref=e636] [cursor=pointer]: 경력 데이터 내보내기
+            - generic [ref=e637] [cursor=pointer]: PDF, Excel 형식
+    - generic [ref=e638]:
+      - generic [ref=e639]:
+        - heading "관리자 권한 디버그 정보" [level=3] [ref=e640]
+        - generic [ref=e641]:
+          - button "프로필 새로고침" [ref=e642] [cursor=pointer]
+          - button "디버그 정보 숨기기" [ref=e643] [cursor=pointer]:
+            - img [ref=e644] [cursor=pointer]
+      - generic [ref=e647]:
+        - generic [ref=e648]:
+          - strong [ref=e649]: "현재 사용자:"
+          - list [ref=e650]:
+            - listitem [ref=e651]: "ID: 4aaf6527-5737-4c17-a6e2-7ea12a0fd430"
+            - listitem [ref=e652]: "Email: admin@k-xpert.co.kr"
+            - listitem [ref=e653]: "Email Confirmed: Yes"
+        - generic [ref=e654]:
+          - strong [ref=e655]: "프로필 정보:"
+          - list [ref=e656]:
+            - listitem [ref=e657]: "Profile ID: null"
+            - listitem [ref=e658]: "Profile Email: null"
+            - listitem [ref=e659]: "Account Type: null"
+            - listitem [ref=e660]: "Name: null"
+            - listitem [ref=e661]: "Verified: No"
+        - generic [ref=e662]:
+          - strong [ref=e663]: "관리자 확인:"
+          - list [ref=e664]:
+            - listitem [ref=e665]: "Admin Emails: [\"admin@k-xpert.co.kr\",\"admin2@k-xpert.co.kr\"]"
+            - listitem [ref=e666]: "Is Admin by Email: Yes"
+            - listitem [ref=e667]: "Is Admin by Profile: No"
+            - listitem [ref=e668]:
+              - strong [ref=e669]: "Final Is Admin: Yes"
+        - generic [ref=e670]:
+          - strong [ref=e671]: "Raw Data:"
+          - generic [ref=e672]: "User: { \"id\": \"4aaf6527-5737-4c17-a6e2-7ea12a0fd430\", \"aud\": \"authenticated\", \"role\": \"authenticated\", \"email\": \"admin@k-xpert.co.kr\", \"email_confirmed_at\": \"2025-07-15T02:55:52.980221Z\", \"phone\": \"\", \"confirmed_at\": \"2025-07-15T02:55:52.980221Z\", \"last_sign_in_at\": \"2025-10-05T04:05:06.022297076Z\", \"app_metadata\": { \"provider\": \"email\", \"providers\": [ \"email\" ] }, \"user_metadata\": { \"account_type\": \"admin\", \"email_verified\": true, \"name\": \"K-Xpert 관리자\" }, \"identities\": [ { \"identity_id\": \"61e15ccd-4586-4676-8bea-87a7afcefacb\", \"id\": \"4aaf6527-5737-4c17-a6e2-7ea12a0fd430\", \"user_id\": \"4aaf6527-5737-4c17-a6e2-7ea12a0fd430\", \"identity_data\": { \"email\": \"admin@k-xpert.co.kr\", \"email_verified\": false, \"phone_verified\": false, \"sub\": \"4aaf6527-5737-4c17-a6e2-7ea12a0fd430\" }, \"provider\": \"email\", \"last_sign_in_at\": \"2025-07-15T02:55:52.974025Z\", \"created_at\": \"2025-07-15T02:55:52.974077Z\", \"updated_at\": \"2025-07-15T02:55:52.974077Z\", \"email\": \"admin@k-xpert.co.kr\" } ], \"created_at\": \"2025-07-15T02:55:52.972565Z\", \"updated_at\": \"2025-10-05T04:05:06.064905Z\", \"is_anonymous\": false }"
+          - generic [ref=e673]: "Profile: null"
+    - generic [ref=e674]:
+      - generic [ref=e675]:
+        - heading "관리자 계정 데이터베이스 상태" [level=3] [ref=e676]
+        - button "다시 확인" [ref=e677] [cursor=pointer]
+      - paragraph [ref=e679]: "에러: Users query error: infinite recursion detected in policy for relation \"users\""
+      - generic [ref=e680]:
+        - strong [ref=e682]: "현재 세션:"
+        - strong [ref=e685]: "admin@k-xpert.co.kr 데이터베이스 레코드:"
+        - generic [ref=e687]:
+          - strong [ref=e688]: "발견된 문제:"
+          - list [ref=e689]:
+            - listitem [ref=e690]: ❌ 활성 세션 없음
+            - listitem [ref=e691]: ⚠️ 사용자 레코드 상태 불명
+            - listitem [ref=e692]: "❌ 계정 타입이 'admin'이 아님: null"
+            - listitem [ref=e693]: "❌ 세션 이메일이 admin@k-xpert.co.kr이 아님: null"
+  - contentinfo [ref=e694]:
+    - generic [ref=e695]:
+      - generic [ref=e696]:
+        - generic [ref=e697]:
+          - generic [ref=e698]:
+            - img [ref=e700]
+            - generic [ref=e703]:
+              - generic [ref=e704]: K-Xpert
+              - generic [ref=e705]: 글로벌 비즈니스 전문가 플랫폼
+          - paragraph [ref=e706]: K-Xpert는 글로벌 비즈니스 전문가들을 위한 경력 검증 및 증명서 발급 플랫폼입니다. 정부 공인 경력관리 시스템을 통해 신뢰할 수 있는 전문가 네트워크를 구축하고 있습니다.
+          - generic [ref=e707]:
+            - generic [ref=e708]:
+              - img [ref=e709]
+              - generic [ref=e712]: caind@caind.kr
+            - generic [ref=e713]:
+              - img [ref=e714]
+              - generic [ref=e716]: 02-539-7113
+            - generic [ref=e717]:
+              - img [ref=e718]
+              - generic [ref=e721]: 서울시 서초구 강남대로 69길 8 KI 타워 10층 1007호
+        - generic [ref=e722]:
+          - heading "서비스" [level=3] [ref=e723]:
+            - img [ref=e724]
+            - text: 서비스
+          - list [ref=e727]:
+            - listitem [ref=e728]:
+              - link "경력 등록" [ref=e729] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e730]:
+              - link "전문가 검증" [ref=e731] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e732]:
+              - link "증명서 발급" [ref=e733] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e734]:
+              - link "기업 서비스" [ref=e735] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e736]:
+              - link "API 연동" [ref=e737] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e738]:
+              - link "경력 분석" [ref=e739] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=e740]:
+          - heading "지원" [level=3] [ref=e741]:
+            - img [ref=e742]
+            - text: 지원
+          - list [ref=e744]:
+            - listitem [ref=e745]:
+              - link "이용 안내" [ref=e746] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e747]:
+              - link "자주 묻는 질문" [ref=e748] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e749]:
+              - link "공지사항" [ref=e750] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e751]:
+              - link "전문가 가이드" [ref=e752] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e753]:
+              - link "기업 가이드" [ref=e754] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e755]:
+              - link "고객센터" [ref=e756] [cursor=pointer]:
+                - /url: "#"
+      - generic [ref=e758]:
+        - generic [ref=e759]:
+          - link [ref=e760] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e761] [cursor=pointer]
+          - link [ref=e763] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e764] [cursor=pointer]
+          - link [ref=e766] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e767] [cursor=pointer]
+          - link [ref=e771] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e772] [cursor=pointer]
+          - link [ref=e775] [cursor=pointer]:
+            - /url: "#"
+            - img [ref=e776] [cursor=pointer]
+        - generic [ref=e779]:
+          - link "개인정보처리방침" [ref=e780] [cursor=pointer]:
+            - /url: /privacy
+          - link "이용약관" [ref=e781] [cursor=pointer]:
+            - /url: /terms
+          - link "보안정책" [ref=e782] [cursor=pointer]:
+            - /url: /security
+    - generic [ref=e785]:
+      - generic [ref=e786]:
+        - paragraph [ref=e787]: © 2024 K-Xpert. All rights reserved.
+        - generic [ref=e789]: "고유번호: 211-82-75543"
+      - generic [ref=e790]:
+        - generic [ref=e791]: Powered by
+        - generic [ref=e792]: CAIND(국제개발컨설팅협회)
+```
