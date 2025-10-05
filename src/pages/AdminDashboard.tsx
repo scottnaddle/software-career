@@ -175,12 +175,6 @@ const AdminDashboard: React.FC = () => {
     { id: 'all', name: '전체', count: stats.pendingExperts + stats.approvedExperts + stats.rejectedExperts }
   ], [stats.pendingExperts, stats.approvedExperts, stats.rejectedExperts]);
 
-  useEffect(() => {
-    if (user && isAdmin) {
-      fetchDashboardData();
-    }
-  }, [user, isAdmin, fetchDashboardData]);
-
   const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
@@ -258,6 +252,12 @@ const AdminDashboard: React.FC = () => {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (user && isAdmin) {
+      fetchDashboardData();
+    }
+  }, [user, isAdmin, fetchDashboardData]);
 
   const fetchExpertApplications = useCallback(async () => {
     try {

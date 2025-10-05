@@ -130,7 +130,32 @@ export const checkAdminStatus = async () => {
 };
 
 // Make functions available globally for console use
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && import.meta.env.DEV) {
   (window as any).createAdminAccount = createAdminAccount;
   (window as any).checkAdminStatus = checkAdminStatus;
+  (window as any).quickAdminLogin = async () => {
+    try {
+      console.log('Attempting quick admin login...');
+
+      // Try to get current session first
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error('Session error:', error);
+        return null;
+      }
+
+      if (session?.user) {
+        console.log('User already logged in:', session.user.email);
+        await checkAdminStatus();
+        return session.user;
+      }
+
+      console.log('No active session found. Please login first at /login');
+      return null;
+    } catch (error) {
+      console.error('Quick admin login error:', error);
+      return null;
+    }
+  };
 }

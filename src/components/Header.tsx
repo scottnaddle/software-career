@@ -12,6 +12,11 @@ const Header = () => {
   const navigate = useNavigate();
   const { user, profile, signOut, loading } = useAuth();
 
+  // Development mode: Check if current user should be admin
+  const isAdmin = import.meta.env.DEV
+    ? profile?.account_type === 'admin' || (user?.email && ['admin@k-xpert.co.kr', 'admin2@k-xpert.co.kr'].includes(user.email))
+    : profile?.account_type === 'admin';
+
   const isActive = (path: string) => {
     return location.pathname === path;
   };
@@ -19,24 +24,28 @@ const Header = () => {
   const handleSignOut = async () => {
     try {
       console.log('Signing out...');
-      await signOut();
+
+      // Close user menu immediately
       setIsUserMenuOpen(false);
-      
-      // Clear any stored redirect paths
-      localStorage.removeItem('auth_redirect_to');
-      
-      // Navigate to home page
+
+      // Perform sign out
+      await signOut();
+
+      // Navigate to home page and force refresh to clear any remaining state
       navigate('/');
-      
-      // Force page refresh to clear any remaining state
+
+      // Force page refresh to ensure complete state reset
       setTimeout(() => {
-        window.location.href = '/';
+        window.location.reload();
       }, 100);
     } catch (error) {
       console.error('Logout error:', error);
       // Force logout even if there's an error
-      localStorage.removeItem('auth_redirect_to');
-      window.location.href = '/';
+      setIsUserMenuOpen(false);
+      navigate('/');
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     }
   };
 
@@ -142,9 +151,9 @@ const Header = () => {
                       {profile?.name || user.email?.split('@')[0]}
                     </div>
                     <div className="text-xs text-blue-100">
-                      {profile?.account_type === 'admin' ? '관리자' : 
+                      {isAdmin ? '관리자' :
                        profile?.account_type === 'enterprise' ? '기업' : '개인'}
-                      {profile?.account_type === 'admin' && (
+                      {isAdmin && (
                         <span className="ml-1 inline-block w-2 h-2 bg-red-400 rounded-full"></span>
                       )}
                     </div>
@@ -182,7 +191,7 @@ const Header = () => {
                         증명서 발급
                       </Link>
                       
-                      {profile?.account_type === 'admin' && (
+                      {isAdmin && (
                         <>
                           <div className="border-t border-gray-100 my-1"></div>
                           <Link
@@ -316,7 +325,7 @@ const Header = () => {
                       </div>
                     </div>
                     
-                    {profile?.account_type === 'admin' && (
+                    {isAdmin && (
                       <Link
                         to="/admin-dashboard"
                         className="flex items-center w-full text-left text-red-300 hover:text-red-200 px-3 py-2 rounded-md text-base font-medium border border-red-400 bg-red-900 bg-opacity-20 mb-2"
@@ -363,8 +372,8 @@ const Header = () => {
         )}
       </div>
       
-      {/* 디버그 정보 - 개발 환경에서만 표시 */}
-      {import.meta.env.DEV && user && <AdminDebug />}
+      {/* 디버그 정보 - 개발 환경에서 관리자일 때 표시 */}
+      {import.meta.env.DEV && user && isAdmin && <AdminDebug />}
     </header>
   );
 };

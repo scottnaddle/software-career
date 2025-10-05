@@ -11,7 +11,9 @@ export const verifyAdminAccess = async (): Promise<void> => {
   }
 
   // Check if user is admin by email
-  if (!ADMIN_EMAILS.includes(user.email || '')) {
+  const isAdminByEmail = ADMIN_EMAILS.includes(user.email || '');
+
+  if (!isAdminByEmail) {
     // Double-check with profile data
     const { data: profile, error: profileError } = await supabase
       .from('users')
@@ -20,12 +22,28 @@ export const verifyAdminAccess = async (): Promise<void> => {
       .single();
 
     if (profileError || !profile) {
+      console.error('Profile fetch error in admin verification:', profileError);
       throw new AuthorizationError('프로필 정보를 확인할 수 없습니다');
     }
 
-    if (profile.account_type !== 'admin' && !ADMIN_EMAILS.includes(profile.email)) {
+    const isAdminByProfile = profile.account_type === 'admin';
+    const isAdminByProfileEmail = ADMIN_EMAILS.includes(profile.email || '');
+
+    console.log('Admin verification check:', {
+      userId: user.id,
+      userEmail: user.email,
+      profileEmail: profile.email,
+      profileAccountType: profile.account_type,
+      isAdminByEmail,
+      isAdminByProfile,
+      isAdminByProfileEmail
+    });
+
+    if (!isAdminByProfile && !isAdminByProfileEmail) {
       throw new AuthorizationError('관리자 권한이 필요합니다');
     }
+  } else {
+    console.log('User verified as admin by email:', user.email);
   }
 };
 

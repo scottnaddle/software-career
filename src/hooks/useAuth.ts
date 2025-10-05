@@ -44,68 +44,84 @@ export function useAuth() {
     }, LOADING_TIMEOUT); // 3 seconds timeout
 
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (import.meta.env.DEV) {
-        console.log('Auth session retrieved:', !!session);
-      }
-      clearTimeout(loadingTimeout);
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (import.meta.env.DEV) {
+          console.log('Auth session retrieved:', !!session);
+          if (error) console.log('Auth session error:', error);
+        }
+
+        clearTimeout(loadingTimeout);
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          await fetchProfile(session.user.id);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        clearTimeout(loadingTimeout);
         setLoading(false);
       }
-    }).catch((error) => {
-      console.error('Auth initialization error:', error);
-      clearTimeout(loadingTimeout);
-      setLoading(false);
-    });
+    };
+
+    initializeAuth();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
+
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
           await fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
-        }
-        setLoading(false);
 
-        // Handle email confirmation and redirect
-        if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
-          console.log('User email confirmed');
-          
-          // Auto-redirect based on user type after successful login
+          // After fetching profile, check if user should be admin and redirect accordingly
           setTimeout(() => {
-            if (typeof window !== 'undefined') {
-              // Check if user profile exists and redirect accordingly
-              const checkProfileAndRedirect = async () => {
-                try {
-                  const { data: profile } = await supabase
-                    .from('users')
-                    .select('account_type')
-                    .eq('id', session.user.id)
-                    .single();
-                  
-                  if (profile?.account_type === 'admin') {
-                    window.location.href = '/admin-dashboard';
-                  } else {
-                    window.location.href = '/career-search';
-                  }
-                } catch (error) {
-                  console.error('Error checking profile for redirect:', error);
+            if (typeof window !== 'undefined' && profile) {
+              const userEmail = session.user.email;
+              const shouldBeAdmin = ADMIN_EMAILS.includes(userEmail || '');
+              const isCurrentlyAdmin = profile.account_type === 'admin';
+
+              console.log('Auth state change - User:', userEmail);
+              console.log('Should be admin:', shouldBeAdmin);
+              console.log('Is currently admin:', isCurrentlyAdmin);
+
+              if (shouldBeAdmin && !isCurrentlyAdmin) {
+                console.log('⚠️ User should be admin but profile is not admin - updating...');
+                // Force admin status update
+                setProfile(prev => prev ? { ...prev, account_type: 'admin', verified: true } : null);
+              }
+
+              // Auto-redirect based on user type after successful login
+              if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
+                console.log('User email confirmed, redirecting...');
+
+                const accountType = shouldBeAdmin ? 'admin' : (profile?.account_type || 'individual');
+                console.log('Redirecting based on account type:', accountType);
+
+                if (accountType === 'admin') {
+                  window.location.href = '/admin-dashboard';
+                } else {
                   window.location.href = '/career-search';
                 }
-              };
-              
-              checkProfileAndRedirect();
+              }
             }
-          }, 100);
+          }, 200); // Increased delay to ensure profile is loaded
+        } else {
+          // Handle SIGNED_OUT event
+          if (event === 'SIGNED_OUT') {
+            console.log('User signed out, clearing profile');
+            setProfile(null);
+          }
         }
+        setLoading(false);
       }
     );
 
@@ -183,10 +199,16 @@ export function useAuth() {
         const userEmail = data.email;
         const shouldBeAdmin = ADMIN_EMAILS.includes(userEmail || '');
         const isCurrentlyAdmin = data.account_type === 'admin';
-        
+
+        console.log('=== PROFILE ANALYSIS ===');
+        console.log('User email:', userEmail);
+        console.log('Should be admin:', shouldBeAdmin);
+        console.log('Is currently admin:', isCurrentlyAdmin);
+        console.log('Current account_type:', data.account_type);
+
         if (shouldBeAdmin && !isCurrentlyAdmin) {
           console.log('🔧 Updating admin account_type for:', userEmail);
-          
+
           try {
             // Update in database
             const { data: updatedData, error: updateError } = await supabase
@@ -199,23 +221,38 @@ export function useAuth() {
               .eq('id', data.id)
               .select()
               .single();
-            
+
             if (updateError) {
               console.error('❌ Failed to update admin account_type:', updateError);
               // Set profile anyway with admin flag for immediate access
-              setProfile({ ...data, account_type: 'admin', verified: true });
+              const adminProfile = { ...data, account_type: 'admin', verified: true };
+              setProfile(adminProfile);
+              console.log('⚠️ Using local admin profile due to DB error');
+              console.log('Final admin profile:', adminProfile);
             } else {
               console.log('✅ Successfully updated admin account_type');
+              console.log('Updated profile:', updatedData);
               setProfile(updatedData);
             }
           } catch (updateErr) {
             console.error('❌ Error during admin update:', updateErr);
             // Set profile anyway with admin flag for immediate access
-            setProfile({ ...data, account_type: 'admin', verified: true });
+            const adminProfile = { ...data, account_type: 'admin', verified: true };
+            setProfile(adminProfile);
+            console.log('⚠️ Using local admin profile due to exception');
+            console.log('Final admin profile:', adminProfile);
           }
         } else {
           setProfile(data);
+          // Double-check admin status even if already admin
+          if (shouldBeAdmin && isCurrentlyAdmin) {
+            console.log('✅ Admin account confirmed for:', userEmail);
+          }
         }
+
+        console.log('=== FINAL PROFILE STATE ===');
+        console.log('Profile set to:', data);
+        console.log('Profile account_type:', data?.account_type);
       }
       
       setLoading(false);
@@ -234,10 +271,25 @@ export function useAuth() {
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log('=== SIGN IN ATTEMPT ===');
+      console.log('Email:', email);
+      console.log('Is admin email:', ADMIN_EMAILS.includes(email));
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+
+      if (data.user && !error) {
+        console.log('Sign in successful for:', data.user.email);
+
+        // Force immediate profile fetch after successful sign in
+        setTimeout(async () => {
+          console.log('Fetching profile after sign in...');
+          await fetchProfile(data.user.id);
+        }, 500);
+      }
+
       return { data, error };
     } catch (error) {
       return { error: error as AuthError };
@@ -281,7 +333,7 @@ export function useAuth() {
           account_type: userData.accountType,
           company: userData.company || null,
           position: userData.position || null,
-          verified: false,
+          verified: userData.accountType === 'admin', // Admin accounts are immediately verified
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };
@@ -345,30 +397,31 @@ export function useAuth() {
   const signOut = async () => {
     try {
       console.log('Starting signOut process...');
-      
-      // Force clear local state first
+
+      // Call Supabase signOut with scope 'global' to clear all sessions
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
+
+      if (error) {
+        console.error('Supabase signOut error:', error);
+      }
+
+      // Clear local state immediately
       setUser(null);
       setProfile(null);
       setSession(null);
       setLoading(false);
-      
-      // Then call Supabase signOut
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error('Supabase signOut error:', error);
-        // Don't return error - still clear local state
-      }
-      
+
       console.log('SignOut completed successfully');
       return { error: null };
     } catch (error) {
       console.error('SignOut catch error:', error);
-      // Even if there's an error, clear local state
+
+      // Clear local state even if there's an error
       setUser(null);
       setProfile(null);
       setSession(null);
       setLoading(false);
+
       return { error: error as AuthError };
     }
   };
@@ -413,6 +466,19 @@ export function useAuth() {
       return { error };
     }
   };
+
+  // Make auth functions available globally for debugging
+  if (typeof window !== 'undefined' && import.meta.env.DEV) {
+    (window as any).authDebug = {
+      user,
+      profile,
+      session,
+      loading,
+      refreshProfile,
+      signOut,
+      signIn
+    };
+  }
 
   return {
     user,

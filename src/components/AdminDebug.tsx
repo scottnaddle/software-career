@@ -1,9 +1,28 @@
 import React from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { ADMIN_EMAILS } from '../constants';
+import { X } from 'lucide-react';
+
+// Add global function to enable debug mode
+if (typeof window !== 'undefined' && import.meta.env.DEV) {
+  (window as any).enableAdminDebug = () => {
+    localStorage.setItem('show_admin_debug', 'true');
+    window.location.reload();
+  };
+
+  (window as any).disableAdminDebug = () => {
+    localStorage.removeItem('show_admin_debug');
+    window.location.reload();
+  };
+}
 
 const AdminDebug: React.FC = () => {
   const { user, profile, loading, refreshProfile } = useAuth();
+
+  const hideDebug = () => {
+    localStorage.removeItem('show_admin_debug');
+    window.location.reload();
+  };
 
   if (loading) {
     return <div>로딩 중...</div>;
@@ -17,12 +36,21 @@ const AdminDebug: React.FC = () => {
     <div className="bg-yellow-100 border border-yellow-400 rounded-lg p-4 m-4">
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-lg font-semibold text-yellow-800">관리자 권한 디버그 정보</h3>
-        <button
-          onClick={refreshProfile}
-          className="px-3 py-1 bg-yellow-600 text-white rounded text-sm hover:bg-yellow-700"
-        >
-          프로필 새로고침
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={refreshProfile}
+            className="px-3 py-1 bg-yellow-600 text-white rounded text-sm hover:bg-yellow-700"
+          >
+            프로필 새로고침
+          </button>
+          <button
+            onClick={hideDebug}
+            className="p-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+            title="디버그 정보 숨기기"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
       </div>
       
       <div className="space-y-2 text-sm">
